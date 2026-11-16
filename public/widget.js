@@ -214,6 +214,53 @@ sheet.replaceSync(`
   .vee.g-shrug .vee-arm-r { animation: vee-shrug-r 1.8s ease-in-out 1; }
   .vee.is-resting { animation: vee-settle 1.6s ease-out 1 forwards; }
 
+  @keyframes vee-point-up {
+    0%, 100% { transform: rotate(0deg); }
+    20%, 80% { transform: rotate(-158deg); }
+  }
+  @keyframes vee-lean-up {
+    0%, 100% { transform: rotate(0deg); }
+    20%, 80% { transform: rotate(-5deg); }
+  }
+  .guide-vee .vee.g-point { animation-name: vee-lean-up; }
+  .guide-vee .vee.g-point .vee-arm-r { animation-name: vee-point-up; }
+  .guide-vee .vee.g-point .vee-eyes { transform: translate(0.6em, -0.6em); }
+
+  /* Guide mode: a second Vee that glides to a link on the page and points at it */
+  .guide-vee {
+    position: fixed;
+    left: 0;
+    top: 0;
+    font-size: 4px;
+    pointer-events: none;
+    visibility: hidden;
+    will-change: transform;
+  }
+
+  .guide-vee.is-active {
+    visibility: visible;
+  }
+
+  .guide-flip {
+    display: block;
+  }
+
+  .guide-vee.is-flipped .guide-flip {
+    transform: scaleX(-1);
+  }
+
+  .guide-vee .vee-body {
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.4), 0 6px 18px rgba(0, 0, 0, 0.32);
+  }
+
+  .launcher .vee {
+    transition: opacity 0.2s ease;
+  }
+
+  .launcher.is-away .vee {
+    opacity: 0;
+  }
+
   .launcher:focus-visible,
   .icon-btn:focus-visible,
   .chip:focus-visible,
@@ -950,6 +997,15 @@ template.innerHTML = `
       </button>
     </form>
   </section>
+<span class="guide-vee" data-el="guide" aria-hidden="true"><span class="guide-flip"><span class="vee" data-el="vee-guide">
+      <span class="vee-arm vee-arm-l"></span>
+      <span class="vee-arm vee-arm-r"></span>
+      <span class="vee-body"></span>
+      <span class="vee-screen">
+        <span class="vee-eyes"><span></span><span></span></span>
+        <svg class="vee-happy" viewBox="0 0 82 50" aria-hidden="true"><path d="M20 30 Q27 18 34 30" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/><path d="M48 30 Q55 18 62 30" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/></svg>
+      </span>
+    </span></span></span>
   <button type="button" class="launcher" data-el="launcher" aria-expanded="false" aria-label="Chat with AI Support" title="Chat with AI Support">
     <span class="vee" data-el="vee-launcher" aria-hidden="true">
       <span class="vee-arm vee-arm-l"></span>
@@ -1130,8 +1186,12 @@ class KhalaSupportWidget extends HTMLElement {
       input: this.shadowRoot.querySelector('[data-el="input"]'),
       send: this.shadowRoot.querySelector('[data-el="send"]'),
       veeLauncher: this.shadowRoot.querySelector('[data-el="vee-launcher"]'),
-      veeAvatar: this.shadowRoot.querySelector('[data-el="vee-avatar"]')
+      veeAvatar: this.shadowRoot.querySelector('[data-el="vee-avatar"]'),
+      guide: this.shadowRoot.querySelector('[data-el="guide"]'),
+      veeGuide: this.shadowRoot.querySelector('[data-el="vee-guide"]')
     };
+    this._guideTimers = [];
+    this._guideCleanup = null;
     this._veeTimers = new Map();
     this._restTimer = null;
 
@@ -1235,6 +1295,7 @@ class KhalaSupportWidget extends HTMLElement {
     clearTimeout(this._restTimer);
     clearTimeout(this._helloTimer);
     this._veeTimers.forEach((t) => clearTimeout(t));
+    this._endGuide();
     window.removeEventListener('online', this._onOnlineChange);
     window.removeEventListener('offline', this._onOnlineChange);
     if (window.visualViewport) {
@@ -1325,6 +1386,132 @@ class KhalaSupportWidget extends HTMLElement {
     this._restTimer = setTimeout(() => {
       if (!this._isOpen) this._els.veeLauncher.classList.add('is-resting');
     }, 30_000);
+  }
+
+  _siteLinkIn(reply) {
+    const text = String(reply || '');
+    const candidates = [];
+    const md = /\]\(([^)\s]+)\)/g;
+    let m;
+    while ((m = md.exec(text))) candidates.push(m[1]);
+    const bare = /https?:\/\/[^\s)<>"']+/g;
+    while ((m = bare.exec(text))) candidates.push(m[0]);
+    const siteHost = (() => {
+      try { return new URL(this._config?.siteUrl || location.origin).host; } catch { return location.host; }
+    })();
+    for (const raw of candidates) {
+      let url;
+      try { url = new URL(raw.replace(/[.,;:!?]+$/, ''), location.origin); } catch { continue; }
+      if (url.host !== location.host && url.host !== siteHost) continue;
+      if (url.pathname === '/' && !url.hash) continue;
+      return url;
+    }
+    return null;
+  }
+
+  _findPageLink(url) {
+    const norm = (p) => (p.replace(/\/+$/, '').replace(/\.html$/, '') || '/');
+    const want = norm(url.pathname);
+    const links = Array.from(document.querySelectorAll('a[href]'));
+    for (const a of links) {
+      let path;
+      try { path = norm(new URL(a.getAttribute('href'), location.href).pathname); } catch { continue; }
+      if (path !== want) continue;
+      const r = a.getBoundingClientRect();
+      if (r.width < 4 || r.height < 4) continue;
+      if (r.top < 0 || r.bottom > window.innerHeight || r.left < 0 || r.right > window.innerWidth) continue;
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      if (!hit || !(hit === a || a.contains(hit))) continue;
+      return a;
+    }
+    return null;
+  }
+
+  _endGuide() {
+    this._guideTimers.forEach((t) => clearTimeout(t));
+    this._guideTimers = [];
+    if (this._guideCleanup) this._guideCleanup();
+    this._guideCleanup = null;
+  }
+
+  _guideTo(url) {
+    if (!url) return false;
+    const link = this._findPageLink(url);
+    if (!link) return false;
+    this._endGuide();
+
+    const prev = {
+      backgroundColor: link.style.backgroundColor,
+      color: link.style.color,
+      boxShadow: link.style.boxShadow
+    };
+    const highlight = () => {
+      link.style.backgroundColor = '#FFD60A';
+      link.style.color = '#0B0B0B';
+      link.style.boxShadow = '0 0 0 4px #FFD60A';
+    };
+    const unhighlight = () => Object.assign(link.style, prev);
+
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const later = (fn, ms) => this._guideTimers.push(setTimeout(fn, ms));
+
+    if (reduced || !this._els.guide.animate) {
+      highlight();
+      this._guideCleanup = unhighlight;
+      later(() => this._endGuide(), 2600);
+      return true;
+    }
+
+    const guide = this._els.guide;
+    const launcher = this._els.launcher;
+    const from = this._els.veeLauncher.getBoundingClientRect();
+    const target = link.getBoundingClientRect();
+    const w = 44;
+    const h = 56;
+    // Stand just below the link, slightly to its left, so the raised right arm points up at it
+    // without covering the neighbouring links.
+    let x = target.left - w * 0.55;
+    let flip = false;
+    if (x < 8) {
+      x = target.right - w * 0.45;
+      flip = true;
+    }
+    x = Math.min(Math.max(x, 8), window.innerWidth - w - 8);
+    let y = target.bottom + 10;
+    if (y + h > window.innerHeight - 8) y = Math.max(target.top - h - 10, 8);
+    const start = `translate(${from.left}px, ${from.top}px)`;
+    const end = `translate(${x}px, ${y}px)`;
+    const ease = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+    guide.classList.toggle('is-flipped', flip);
+    guide.style.transform = start;
+    guide.classList.add('is-active');
+    launcher.classList.add('is-away');
+
+    const there = guide.animate([{ transform: start }, { transform: end }], { duration: 750, easing: ease, fill: 'forwards' });
+    let back = null;
+
+    this._guideCleanup = () => {
+      there.cancel();
+      if (back) back.cancel();
+      unhighlight();
+      this._gesture(this._els.veeGuide, null);
+      guide.classList.remove('is-active', 'is-flipped');
+      guide.style.transform = '';
+      launcher.classList.remove('is-away');
+    };
+
+    later(() => {
+      highlight();
+      this._gesture(this._els.veeGuide, 'point', 2300);
+    }, 760);
+    later(() => {
+      unhighlight();
+      const now = this._els.veeLauncher.getBoundingClientRect();
+      back = guide.animate([{ transform: end }, { transform: `translate(${now.left}px, ${now.top}px)` }], { duration: 650, easing: ease, fill: 'forwards' });
+    }, 3200);
+    later(() => this._endGuide(), 3900);
+    return true;
   }
 
   _gestureForReply(reply) {
@@ -1591,6 +1778,10 @@ class KhalaSupportWidget extends HTMLElement {
         this._appendMessage('bot', data.reply, { animateBlocks: true });
         const gesture = this._gestureForReply(data.reply);
         this._gesture(this._els.veeAvatar, gesture, gesture === 'point' ? 2300 : gesture === 'shrug' ? 1900 : 1500);
+        if (gesture === 'point') {
+          const url = this._siteLinkIn(data.reply);
+          setTimeout(() => this._guideTo(url), 600);
+        }
       }
     } catch {
       typingEl.remove();
