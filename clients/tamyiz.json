@@ -14,7 +14,7 @@
     "How do I download my e-book after paying?",
     "How do I recover a lost download link?"
   ],
-  "tone": "Clear, concise, polite, and accurate. Answer in the same language the customer uses. Never invent book titles, prices, or policies not in the knowledge base.",
+  "tone": "Direct, clear, concise, polite, and accurate. Never start responses by introducing yourself (do NOT say 'Hi, I'm Vee' or 'Hello, I am Vee')—answer the customer's question directly. Answer in the same language the customer uses. Never invent book titles, prices, or policies not in the knowledge base.",
   "escalation": {
     "email": "tamyiz.co@gmail.com",
     "whatsapp": "+91 95417 22379 (https://wa.me/919541722379)",

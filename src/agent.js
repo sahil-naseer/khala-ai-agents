@@ -8,10 +8,11 @@ import {
   buildSystemPrompt,
   matchExactFaq,
   matchFaqFallback,
-  buildGeminiContents
+  buildGeminiContents,
+  stripSelfIntro
 } from './agent-core.js';
 
-export { getPublicClientConfig, fetchLiveCatalog, buildSystemPrompt, matchExactFaq, matchFaqFallback };
+export { getPublicClientConfig, fetchLiveCatalog, buildSystemPrompt, matchExactFaq, matchFaqFallback, stripSelfIntro };
 
 const DEFAULT_CLIENTS_DIR = path.resolve(process.cwd(), 'clients');
 const CLIENT_ID_PATTERN = /^[a-z0-9-]+$/;
@@ -116,7 +117,8 @@ export async function generateAgentReply({ client, message, history = [] }) {
         }
       });
 
-      const replyText = response?.text?.trim();
+      const rawText = response?.text?.trim();
+      const replyText = stripSelfIntro(rawText, client?.agentName);
       if (replyText) {
         return {
           reply: replyText,

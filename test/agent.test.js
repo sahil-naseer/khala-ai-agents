@@ -7,7 +7,8 @@ import {
   getPublicClientConfig,
   buildSystemPrompt,
   matchExactFaq,
-  matchFaqFallback
+  matchFaqFallback,
+  stripSelfIntro
 } from '../src/agent.js';
 import { createApp } from '../server.js';
 
@@ -53,6 +54,25 @@ test('matchFaqFallback matches relevant FAQ in demo mode', async () => {
   const tamyiz = await loadClientConfig('tamyiz');
   const reply = matchFaqFallback(tamyiz, 'How do I download my e-book after paying?');
   assert.match(reply, /Razorpay/);
+});
+
+test('stripSelfIntro removes repetitive self-introductions', () => {
+  assert.equal(
+    stripSelfIntro("Hi, I'm Vee! The following books are available.", 'Vee'),
+    'The following books are available.'
+  );
+  assert.equal(
+    stripSelfIntro("Hello, I am Vee. How can I help?", 'Vee'),
+    'How can I help?'
+  );
+  assert.equal(
+    stripSelfIntro("Hi, I'm Vee, your assistant at TAMYIZ™. Here is the link.", 'Vee'),
+    'Here is the link.'
+  );
+  assert.equal(
+    stripSelfIntro("DRM-free PDF e-books are available on TAMYIZ™.", 'Vee'),
+    'DRM-free PDF e-books are available on TAMYIZ™.'
+  );
 });
 
 test('HTTP API endpoints serve config and chat responses', async () => {

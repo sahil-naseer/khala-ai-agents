@@ -6,7 +6,8 @@ import {
   buildSystemPrompt,
   matchExactFaq,
   matchFaqFallback,
-  buildGeminiContents
+  buildGeminiContents,
+  stripSelfIntro
 } from './agent-core.js';
 
 export { getPublicClientConfig };
@@ -103,9 +104,10 @@ export async function generateEdgeReply({ client, message, history = [], env = {
 
       const data = await res.json();
       const parts = data?.candidates?.[0]?.content?.parts;
-      const replyText = Array.isArray(parts)
+      const rawText = Array.isArray(parts)
         ? parts.filter((p) => !p?.thought).map((p) => p?.text || '').join('').trim()
         : '';
+      const replyText = stripSelfIntro(rawText, client?.agentName);
 
       if (replyText) {
         return {

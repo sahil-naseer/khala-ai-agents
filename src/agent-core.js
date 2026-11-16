@@ -204,6 +204,7 @@ export function buildSystemPrompt(client, catalog = []) {
     faqsText,
     '',
     'Strict Rules:',
+    `- Never introduce yourself or repeat your name (NEVER start replies with "Hi, I'm ${client.agentName || 'Vee'}", "Hello, I am ${client.agentName || 'Vee'}", or similar greetings). The user already knows who you are from the chat header. Answer their question directly without repetitive greetings.`,
     '- Only state facts, book titles, prices, policies, and contact details present in the Business Overview, Live Product Catalog, or FAQs above.',
     '- Never invent pricing, discounts, guarantees, or policies.',
     `- If you are unsure or the user needs human help, ${escalation.note || 'apologize politely and share our support contact.'}`,
@@ -305,4 +306,18 @@ export function buildGeminiContents(message, history = []) {
     ...sanitizedHistory,
     { role: 'user', parts: [{ text: message }] }
   ];
+}
+
+/**
+ * Strips repetitive introductory greetings and self-introductions (e.g. "Hi, I'm Vee!").
+ */
+export function stripSelfIntro(text, agentName = 'Vee') {
+  if (typeof text !== 'string') return '';
+  const escapedName = (agentName || 'Vee').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const introPattern = new RegExp(
+    `^(?:(?:Assalamu Alaikum[!,.]*|Hi|Hello|Hey|Greetings)[!,.]*\\s+)?(?:I'm|I am)\\s+${escapedName}(?:\\s*[,-]?\\s*(?:your|the|an)\\s+[^.!?\\n]+[!.?]+|\\s+from\\s+[^.!?\\n]+[!.?]+|[!,.]+|\\s+and\\s+[^.!?\\n]+[!.?]+)\\s*`,
+    'i'
+  );
+  const stripped = text.replace(introPattern, '').trim();
+  return stripped.length > 0 ? stripped : text.trim();
 }
