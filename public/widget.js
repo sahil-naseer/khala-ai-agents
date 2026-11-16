@@ -53,59 +53,166 @@ sheet.replaceSync(`
   .launcher {
     position: relative;
     pointer-events: auto;
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 66px;
     padding: 0;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    background: var(--_accent);
-    color: #FFFFFF;
+    border: 0;
+    border-radius: 18px;
+    background: transparent;
     display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.22);
-    transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, transform 0.26s var(--_ease), opacity 0.22s ease, box-shadow 0.24s ease;
-  }
-
-  .launcher svg {
-    position: absolute;
-    transition: opacity 0.22s ease, transform 0.26s var(--_ease);
-  }
-
-  .launcher .icon-bot {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-  }
-
-  .launcher .icon-close {
-    opacity: 0;
-    transform: rotate(-90deg) scale(0.6);
-  }
-
-  :host([data-open="true"]) .launcher .icon-bot {
-    opacity: 0;
-    transform: rotate(90deg) scale(0.6);
-  }
-
-  :host([data-open="true"]) .launcher .icon-close {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
+    font-size: 4px;
+    transition: transform 0.26s var(--_ease), opacity 0.22s ease;
   }
 
   @media (hover: hover) {
     .launcher:hover {
-      background: var(--_yellow);
-      color: #0B0B0B;
-      border-color: #0B0B0B;
-      transform: translateY(-2px) scale(1.06);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32), 0 0 0 1px #0B0B0B;
+      transform: translateY(-3px);
     }
   }
 
   .launcher:active {
     transform: scale(0.94);
   }
+
+  /* ---- Vee: black oval body, dark screen face, two white eyes, two small arms ---- */
+  .vee {
+    position: relative;
+    display: block;
+    width: 11em;
+    height: 14em;
+    flex-shrink: 0;
+    transform-origin: 50% 100%;
+  }
+
+  .vee-body {
+    position: absolute;
+    inset: 0;
+    background: #0B0B0B;
+    border-radius: 50%;
+  }
+
+  .launcher .vee-body {
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.4), 0 6px 18px rgba(0, 0, 0, 0.32);
+  }
+
+  .vee-arm {
+    position: absolute;
+    top: 7.2em;
+    width: 1.8em;
+    height: 4.6em;
+    background: #0B0B0B;
+    border-radius: 0.9em;
+    transform-origin: 50% 0.8em;
+  }
+
+  .vee-arm-l { left: -1.1em; }
+  .vee-arm-r { right: -1.1em; }
+
+  .vee-screen {
+    position: absolute;
+    left: 1.4em;
+    top: 3em;
+    width: 8.2em;
+    height: 5em;
+    background: #2B2B29;
+    border-radius: 2.4em;
+    overflow: hidden;
+  }
+
+  .vee-eyes {
+    position: absolute;
+    left: 2em;
+    top: 1.5em;
+    display: flex;
+    gap: 1.4em;
+    transition: transform 0.25s var(--_ease), opacity 0.2s ease;
+  }
+
+  .vee-eyes span {
+    display: block;
+    width: 1.4em;
+    height: 2em;
+    background: #FFFFFF;
+    border-radius: 0.5em;
+    transition: height 0.4s var(--_ease), transform 0.4s var(--_ease);
+  }
+
+  .vee-happy {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Eye states */
+  .vee.g-hello .vee-eyes,
+  .vee.g-done .vee-eyes,
+  .launcher:hover .vee:not(.is-resting) .vee-eyes { opacity: 0; }
+  .vee.g-hello .vee-happy,
+  .vee.g-done .vee-happy,
+  .launcher:hover .vee:not(.is-resting) .vee-happy { opacity: 1; }
+  .vee.g-think .vee-eyes { transform: translate(-0.4em, -0.6em); }
+  .vee.g-point .vee-eyes { transform: translate(0.8em, -0.3em); }
+  .vee.is-resting .vee-eyes span { height: 0.5em; transform: translateY(0.8em); }
+
+  /* Gestures: each plays once, then Vee goes still */
+  @keyframes vee-wave {
+    0%, 100% { transform: rotate(0deg); }
+    18% { transform: rotate(-150deg); }
+    34% { transform: rotate(-118deg); }
+    50% { transform: rotate(-158deg); }
+    66% { transform: rotate(-118deg); }
+    82% { transform: rotate(-150deg); }
+  }
+  @keyframes vee-point-arm {
+    0%, 100% { transform: rotate(0deg); }
+    20%, 80% { transform: rotate(-125deg); }
+  }
+  @keyframes vee-lean {
+    0%, 100% { transform: rotate(0deg); }
+    20%, 80% { transform: rotate(7deg); }
+  }
+  @keyframes vee-tilt {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(3deg); }
+  }
+  @keyframes vee-hop {
+    0%, 50%, 100% { transform: translateY(0); }
+    20% { transform: translateY(-1.6em); }
+    35% { transform: translateY(0); }
+    42% { transform: translateY(-0.6em); }
+  }
+  @keyframes vee-raise {
+    0%, 100% { transform: rotate(0deg); }
+    15%, 80% { transform: rotate(-165deg); }
+  }
+  @keyframes vee-shrug-l {
+    0%, 100% { transform: rotate(0deg); }
+    25%, 75% { transform: rotate(70deg); }
+  }
+  @keyframes vee-shrug-r {
+    0%, 100% { transform: rotate(0deg); }
+    25%, 75% { transform: rotate(-70deg); }
+  }
+  @keyframes vee-settle {
+    to { transform: translateY(0.4em) scale(1.03, 0.96); }
+  }
+
+  .vee.g-hello .vee-arm-r { animation: vee-wave 1.5s ease-in-out 1; }
+  .vee.g-point { animation: vee-lean 2.2s var(--_ease) 1; }
+  .vee.g-point .vee-arm-r { animation: vee-point-arm 2.2s var(--_ease) 1; }
+  .vee.g-think { animation: vee-tilt 2.6s ease-in-out 8; }
+  .vee.g-think .vee-arm-l { transform: rotate(150deg) translate(-0.6em, -0.4em); transition: transform 0.3s var(--_ease); }
+  .vee.g-done { animation: vee-hop 1.4s ease-in-out 1; }
+  .vee.g-done .vee-arm-r { animation: vee-raise 1.4s var(--_ease) 1; }
+  .vee.g-shrug .vee-arm-l { animation: vee-shrug-l 1.8s ease-in-out 1; }
+  .vee.g-shrug .vee-arm-r { animation: vee-shrug-r 1.8s ease-in-out 1; }
+  .vee.is-resting { animation: vee-settle 1.6s ease-out 1 forwards; }
 
   .launcher:focus-visible,
   .icon-btn:focus-visible,
@@ -171,16 +278,16 @@ sheet.replaceSync(`
   }
 
   .avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    color: var(--_yellow);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--_yellow);
     display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     flex-shrink: 0;
+    font-size: 2.1px;
+    padding-bottom: 3px;
   }
 
   .header-info {
@@ -670,8 +777,9 @@ sheet.replaceSync(`
       pointer-events: auto;
     }
     .launcher {
-      width: 46px;
-      height: 46px;
+      width: 52px;
+      height: 62px;
+      font-size: 3.7px;
     }
     :host([data-open="true"]) .launcher {
       position: absolute;
@@ -745,8 +853,9 @@ sheet.replaceSync(`
       padding: 10px 12px;
     }
     .avatar {
-      width: 26px;
-      height: 26px;
+      width: 32px;
+      height: 32px;
+      font-size: 1.9px;
     }
     .agent-name {
       font-size: 13.5px;
@@ -765,7 +874,9 @@ sheet.replaceSync(`
     .backdrop,
     .panel,
     .launcher,
-    .launcher svg,
+    .vee-eyes,
+    .vee-eyes span,
+    .vee-happy,
     .icon-btn,
     .chip,
     .input,
@@ -780,8 +891,10 @@ sheet.replaceSync(`
     .msg.bot.is-revealing h3,
     .msg.bot.is-revealing h4,
     .suggestions,
-    .typing-dots span {
-      animation: none;
+    .typing-dots span,
+    .vee,
+    .vee * {
+      animation: none !important;
     }
   }
 `);
@@ -793,14 +906,15 @@ template.innerHTML = `
     <header class="header">
       <div class="header-brand">
         <div class="avatar" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 8V4H8" />
-            <rect width="16" height="12" x="4" y="8" rx="2" />
-            <path d="M2 14h2" />
-            <path d="M20 14h2" />
-            <path d="M15 13v2" />
-            <path d="M9 13v2" />
-          </svg>
+          <span class="vee" data-el="vee-avatar" aria-hidden="true">
+      <span class="vee-arm vee-arm-l"></span>
+      <span class="vee-arm vee-arm-r"></span>
+      <span class="vee-body"></span>
+      <span class="vee-screen">
+        <span class="vee-eyes"><span></span><span></span></span>
+        <svg class="vee-happy" viewBox="0 0 82 50" aria-hidden="true"><path d="M20 30 Q27 18 34 30" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/><path d="M48 30 Q55 18 62 30" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/></svg>
+      </span>
+    </span>
         </div>
         <div class="header-info">
           <div class="agent-name" data-el="agent-name">Support AI</div>
@@ -837,14 +951,15 @@ template.innerHTML = `
     </form>
   </section>
   <button type="button" class="launcher" data-el="launcher" aria-expanded="false" aria-label="Chat with AI Support" title="Chat with AI Support">
-    <svg class="icon-bot" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M12 21a3 3 0 0 0-3-3H3V10h5a4 4 0 0 1 4 4z" />
-      <path d="M12 21a3 3 0 0 1 3-3h6V10h-5a4 4 0 0 0-4 4z" />
-      <path d="M12 2.2l.9 2.2 2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9z" fill="currentColor" stroke-width="1.2" />
-    </svg>
-    <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="m6 9 6 6 6-6" />
-    </svg>
+    <span class="vee" data-el="vee-launcher" aria-hidden="true">
+      <span class="vee-arm vee-arm-l"></span>
+      <span class="vee-arm vee-arm-r"></span>
+      <span class="vee-body"></span>
+      <span class="vee-screen">
+        <span class="vee-eyes"><span></span><span></span></span>
+        <svg class="vee-happy" viewBox="0 0 82 50" aria-hidden="true"><path d="M20 30 Q27 18 34 30" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/><path d="M48 30 Q55 18 62 30" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/></svg>
+      </span>
+    </span>
   </button>
 `;
 
@@ -1013,8 +1128,12 @@ class KhalaSupportWidget extends HTMLElement {
       scrollBottom: this.shadowRoot.querySelector('[data-el="scroll-bottom"]'),
       form: this.shadowRoot.querySelector('[data-el="form"]'),
       input: this.shadowRoot.querySelector('[data-el="input"]'),
-      send: this.shadowRoot.querySelector('[data-el="send"]')
+      send: this.shadowRoot.querySelector('[data-el="send"]'),
+      veeLauncher: this.shadowRoot.querySelector('[data-el="vee-launcher"]'),
+      veeAvatar: this.shadowRoot.querySelector('[data-el="vee-avatar"]')
     };
+    this._veeTimers = new Map();
+    this._restTimer = null;
 
     this._history = [];
     this._config = null;
@@ -1039,6 +1158,8 @@ class KhalaSupportWidget extends HTMLElement {
     if (!this._listenersBound) {
       this._listenersBound = true;
       this._els.launcher.addEventListener('click', () => this.toggle());
+      this._els.launcher.addEventListener('pointerenter', () => this._wakeVee());
+      this._els.launcher.addEventListener('focus', () => this._wakeVee());
       this._els.close.addEventListener('click', () => this.close());
       this._els.backdrop.addEventListener('click', () => this.close());
       this._els.reset.addEventListener('click', () => this.resetConversation());
@@ -1100,10 +1221,20 @@ class KhalaSupportWidget extends HTMLElement {
     this._syncOnlineStatus();
     this._syncSendState();
     this.loadClientConfig();
+    this._wakeVee();
+    clearTimeout(this._helloTimer);
+    this._helloTimer = setTimeout(() => {
+      let seen = false;
+      try { seen = sessionStorage.getItem('khala-vee-hello') === '1'; sessionStorage.setItem('khala-vee-hello', '1'); } catch {}
+      if (!seen && !this._isOpen) this._gesture(this._els.veeLauncher, 'hello', 1600);
+    }, 1500);
   }
 
   disconnectedCallback() {
     document.removeEventListener('pointerdown', this._onDocPointerDown);
+    clearTimeout(this._restTimer);
+    clearTimeout(this._helloTimer);
+    this._veeTimers.forEach((t) => clearTimeout(t));
     window.removeEventListener('online', this._onOnlineChange);
     window.removeEventListener('offline', this._onOnlineChange);
     if (window.visualViewport) {
@@ -1176,6 +1307,33 @@ class KhalaSupportWidget extends HTMLElement {
     }
   }
 
+  _gesture(vee, name, ms) {
+    if (!vee) return;
+    clearTimeout(this._veeTimers.get(vee));
+    vee.classList.remove('g-hello', 'g-point', 'g-think', 'g-done', 'g-shrug');
+    if (!name) return;
+    void vee.offsetWidth;
+    vee.classList.add(`g-${name}`);
+    if (ms) {
+      this._veeTimers.set(vee, setTimeout(() => vee.classList.remove(`g-${name}`), ms));
+    }
+  }
+
+  _wakeVee() {
+    this._els.veeLauncher.classList.remove('is-resting');
+    clearTimeout(this._restTimer);
+    this._restTimer = setTimeout(() => {
+      if (!this._isOpen) this._els.veeLauncher.classList.add('is-resting');
+    }, 30_000);
+  }
+
+  _gestureForReply(reply) {
+    const text = String(reply || '');
+    if (/\b(not sure|don't know|do not know|don't have that|cannot help|can't help)\b/i.test(text)) return 'shrug';
+    if (/tamyiz\.pages\.dev\/[a-z]|\]\(\/[a-z]/i.test(text)) return 'point';
+    return 'done';
+  }
+
   open() {
     this._isOpen = true;
     this._updateViewportMetrics();
@@ -1183,6 +1341,9 @@ class KhalaSupportWidget extends HTMLElement {
     this._els.panel.classList.add('is-open');
     this._els.panel.setAttribute('aria-hidden', 'false');
     this._els.launcher.setAttribute('aria-expanded', 'true');
+    this._els.veeLauncher.classList.remove('is-resting');
+    clearTimeout(this._restTimer);
+    this._gesture(this._els.veeAvatar, 'hello', 1600);
     this._scrollToBottom();
     if (!this._isCoarsePointer()) {
       requestAnimationFrame(() => this._els.input.focus());
@@ -1195,6 +1356,7 @@ class KhalaSupportWidget extends HTMLElement {
     this._els.panel.classList.remove('is-open');
     this._els.panel.setAttribute('aria-hidden', 'true');
     this._els.launcher.setAttribute('aria-expanded', 'false');
+    this._wakeVee();
     this._els.input.blur();
     if (this.shadowRoot.activeElement && this.shadowRoot.activeElement !== this._els.launcher) {
       this._els.launcher.focus();
@@ -1399,6 +1561,7 @@ class KhalaSupportWidget extends HTMLElement {
     }
 
     const typingEl = this._appendTypingIndicator();
+    this._gesture(this._els.veeAvatar, 'think');
 
     try {
       const res = await fetch(`${this.apiBase}/api/chat`, {
@@ -1416,6 +1579,7 @@ class KhalaSupportWidget extends HTMLElement {
       typingEl.remove();
 
       if (!res.ok) {
+        this._gesture(this._els.veeAvatar, 'shrug', 1900);
         this._appendMessage('bot', data.error || 'Sorry, something went wrong. Please try again.', {
           animateBlocks: true,
           isError: true,
@@ -1425,9 +1589,12 @@ class KhalaSupportWidget extends HTMLElement {
         this._history.push({ role: 'user', text });
         this._history.push({ role: 'model', text: data.reply });
         this._appendMessage('bot', data.reply, { animateBlocks: true });
+        const gesture = this._gestureForReply(data.reply);
+        this._gesture(this._els.veeAvatar, gesture, gesture === 'point' ? 2300 : gesture === 'shrug' ? 1900 : 1500);
       }
     } catch {
       typingEl.remove();
+      this._gesture(this._els.veeAvatar, 'shrug', 1900);
       this._appendMessage('bot', 'Unable to reach the support server right now. Please check your connection and try again.', {
         animateBlocks: true,
         isError: true,
