@@ -573,6 +573,7 @@ sheet.replaceSync(`
   .input {
     flex: 1;
     min-width: 0;
+    height: 40px;
     min-height: 40px;
     max-height: 104px;
     resize: none;
@@ -580,7 +581,7 @@ sheet.replaceSync(`
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 20px;
     padding: 9px 14px;
-    line-height: 1.4;
+    line-height: 20px;
     background: var(--_paper);
     color: var(--_fg);
     transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -588,6 +589,9 @@ sheet.replaceSync(`
 
   .input::placeholder {
     color: var(--_muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .input:focus {
@@ -721,7 +725,9 @@ sheet.replaceSync(`
     }
     .input {
       font-size: 16px;
+      height: 42px;
       min-height: 42px;
+      line-height: 22px;
       padding: 9px 14px;
       border-radius: 21px;
     }
@@ -1151,6 +1157,11 @@ class KhalaSupportWidget extends HTMLElement {
 
   _autoResizeInput() {
     const el = this._els.input;
+    if (!el.value) {
+      el.style.height = '';
+      el.style.overflowY = 'hidden';
+      return;
+    }
     el.style.height = 'auto';
     const next = Math.min(el.scrollHeight, 104);
     if (next > 0) {
