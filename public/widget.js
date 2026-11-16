@@ -416,35 +416,71 @@ sheet.replaceSync(`
       width: 44px;
       height: 44px;
     }
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-    }
     .input {
       font-size: 16px;
-      min-height: 44px;
-    }
-    .send-btn {
-      min-height: 44px;
-      padding: 0 18px;
-    }
-    .chip {
-      min-height: 38px;
-      padding: 8px 14px;
-      font-size: 13px;
     }
   }
 
   @media (max-width: 639px) {
     :host {
-      right: max(10px, env(safe-area-inset-right));
+      right: max(12px, env(safe-area-inset-right));
       bottom: max(12px, env(safe-area-inset-bottom));
     }
     .panel {
-      width: calc(100vw - 20px);
-      height: min(490px, calc(100dvh - 82px));
+      width: min(310px, calc(100vw - 28px));
+      height: min(390px, calc(100dvh - 110px));
       margin-bottom: 8px;
-      border-radius: 22px;
+      border-radius: 20px;
+    }
+    .header {
+      padding: 11px 14px;
+    }
+    .kicker {
+      font-size: 9px;
+    }
+    .agent-name {
+      font-size: 13.5px;
+    }
+    .tagline {
+      font-size: 9.5px;
+    }
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+    }
+    .messages {
+      padding: 11px;
+      gap: 8px;
+    }
+    .msg {
+      padding: 9px 12px;
+      font-size: 12.5px;
+      border-radius: 16px;
+    }
+    .suggestions {
+      padding: 7px 11px;
+      gap: 5px;
+    }
+    .chip {
+      padding: 5px 10px;
+      font-size: 11.5px;
+    }
+    .composer {
+      padding: 8px 10px;
+      gap: 6px;
+    }
+    .input {
+      padding: 7px 12px;
+      min-height: 36px;
+    }
+    .send-btn {
+      padding: 0 13px;
+      min-height: 36px;
+      font-size: 12.5px;
+    }
+    .powered {
+      font-size: 9px;
+      padding: 2px 8px 6px;
     }
   }
 
