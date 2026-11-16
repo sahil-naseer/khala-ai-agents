@@ -8,10 +8,12 @@ sheet.replaceSync(`
     --_surface: var(--khala-surface, #f1f5f9);
     --_border: var(--khala-border, #e2e8f0);
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    right: 1.5rem;
+    bottom: 1.5rem;
     z-index: 2147483000;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 14px;
     line-height: 1.45;
@@ -28,23 +30,35 @@ sheet.replaceSync(`
   }
 
   .launcher {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
-    border: none;
-    border-radius: 999px;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
     background: var(--_accent);
     color: #ffffff;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.25);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
   }
 
   .launcher:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.26);
+    transform: scale(1.08);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    :host {
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+    }
+    .launcher {
+      width: 44px;
+      height: 44px;
+    }
   }
 
   .launcher:focus-visible,
@@ -263,9 +277,15 @@ template.innerHTML = `
     </form>
     <div class="powered">Powered by Khala AI Agents</div>
   </section>
-  <button type="button" class="launcher" data-el="launcher" aria-expanded="false">
-    <span aria-hidden="true">&#x1F4AC;</span>
-    <span data-el="launcher-label">Chat with us</span>
+  <button type="button" class="launcher" data-el="launcher" aria-expanded="false" aria-label="Chat with AI Support" title="Chat with AI Support">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 8V4H8" />
+      <rect width="16" height="12" x="4" y="8" rx="2" />
+      <path d="M2 14h2" />
+      <path d="M20 14h2" />
+      <path d="M15 13v2" />
+      <path d="M9 13v2" />
+    </svg>
   </button>
 `;
 
@@ -283,7 +303,6 @@ class KhalaSupportWidget extends HTMLElement {
     this._els = {
       panel: this.shadowRoot.querySelector('.panel'),
       launcher: this.shadowRoot.querySelector('[data-el="launcher"]'),
-      launcherLabel: this.shadowRoot.querySelector('[data-el="launcher-label"]'),
       close: this.shadowRoot.querySelector('[data-el="close"]'),
       reset: this.shadowRoot.querySelector('[data-el="reset"]'),
       agentName: this.shadowRoot.querySelector('[data-el="agent-name"]'),
@@ -362,7 +381,9 @@ class KhalaSupportWidget extends HTMLElement {
       }
       this._els.agentName.textContent = this._config.agentName || 'Support AI';
       this._els.tagline.textContent = this._config.tagline || 'Online';
-      this._els.launcherLabel.textContent = `Chat with ${this._config.businessName || 'us'}`;
+      const label = `Chat with ${this._config.businessName || 'us'}`;
+      this._els.launcher.setAttribute('aria-label', label);
+      this._els.launcher.setAttribute('title', label);
       this._els.input.placeholder = this._config.placeholder || 'Type your question...';
       this.resetConversation();
     } catch {
