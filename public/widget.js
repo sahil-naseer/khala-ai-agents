@@ -29,6 +29,8 @@ sheet.replaceSync(`
   button, input, textarea {
     font: inherit;
     color: inherit;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .launcher {
@@ -409,16 +411,39 @@ sheet.replaceSync(`
     background: var(--_bg);
   }
 
-  @media (max-width: 768px) {
-    :host {
-      right: max(14px, env(safe-area-inset-right));
-      bottom: max(14px, env(safe-area-inset-bottom));
-    }
+  @media (max-width: 768px), (pointer: coarse) {
     .launcher {
       width: 44px;
       height: 44px;
     }
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+    }
+    .input {
+      font-size: 16px;
+      min-height: 44px;
+    }
+    .send-btn {
+      min-height: 44px;
+      padding: 0 18px;
+    }
+    .chip {
+      min-height: 38px;
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    :host {
+      right: max(10px, env(safe-area-inset-right));
+      bottom: max(12px, env(safe-area-inset-bottom));
+    }
     .panel {
+      width: calc(100vw - 20px);
+      height: min(490px, calc(100dvh - 82px));
+      margin-bottom: 8px;
       border-radius: 22px;
     }
   }
@@ -639,13 +664,19 @@ class KhalaSupportWidget extends HTMLElement {
     return (this.getAttribute('api-base') || window.location.origin).replace(/\/$/, '');
   }
 
+  _isCoarsePointer() {
+    return Boolean(window.matchMedia?.('(pointer: coarse)').matches);
+  }
+
   open() {
     this._isOpen = true;
     this._els.panel.classList.add('is-open');
     this._els.panel.setAttribute('aria-hidden', 'false');
     this._els.launcher.setAttribute('aria-expanded', 'true');
     this._scrollToBottom();
-    requestAnimationFrame(() => this._els.input.focus());
+    if (!this._isCoarsePointer()) {
+      requestAnimationFrame(() => this._els.input.focus());
+    }
   }
 
   close() {
@@ -864,7 +895,7 @@ class KhalaSupportWidget extends HTMLElement {
     } finally {
       this._busy = false;
       this._els.send.disabled = false;
-      if (this._isOpen) {
+      if (this._isOpen && !this._isCoarsePointer()) {
         this._els.input.focus();
       }
     }
