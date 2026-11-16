@@ -1,12 +1,14 @@
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(`
   :host {
-    --_accent: var(--khala-accent, #2563eb);
-    --_bg: var(--khala-bg, #ffffff);
-    --_fg: var(--khala-fg, #0f172a);
-    --_muted: var(--khala-muted, #64748b);
-    --_surface: var(--khala-surface, #f1f5f9);
-    --_border: var(--khala-border, #e2e8f0);
+    --_accent: var(--khala-accent, #0B0B0B);
+    --_yellow: var(--khala-yellow, #FFD60A);
+    --_paper: var(--khala-paper, #F1F1EF);
+    --_bg: var(--khala-bg, #FFFFFF);
+    --_fg: var(--khala-fg, #0B0B0B);
+    --_muted: var(--khala-muted, #5E5E59);
+    --_border: var(--khala-border, rgba(0, 0, 0, 0.14));
+    --_ease: cubic-bezier(0.16, 1, 0.3, 1);
     position: fixed;
     right: 1.5rem;
     bottom: 1.5rem;
@@ -14,9 +16,9 @@ sheet.replaceSync(`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-body, 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.5;
     color: var(--_fg);
   }
 
@@ -36,29 +38,25 @@ sheet.replaceSync(`
     border-radius: 50%;
     border: 1.5px solid rgba(255, 255, 255, 0.35);
     background: var(--_accent);
-    color: #ffffff;
+    color: #FFFFFF;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.25);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.22s var(--_ease), box-shadow 0.22s ease;
   }
 
   .launcher:hover {
-    transform: scale(1.08);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.4);
+    background: var(--_yellow);
+    color: #0B0B0B;
+    border-color: #0B0B0B;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32), 0 0 0 1px #0B0B0B;
   }
 
-  @media (max-width: 768px) {
-    :host {
-      right: max(14px, env(safe-area-inset-right));
-      bottom: max(14px, env(safe-area-inset-bottom));
-    }
-    .launcher {
-      width: 44px;
-      height: 44px;
-    }
+  .launcher:active {
+    transform: scale(0.96);
   }
 
   .launcher:focus-visible,
@@ -66,25 +64,39 @@ sheet.replaceSync(`
   .chip:focus-visible,
   .send-btn:focus-visible,
   .input:focus-visible {
-    outline: 2px solid var(--_accent);
+    outline: 2px solid #0B0B0B;
     outline-offset: 2px;
   }
 
+  .icon-btn:focus-visible {
+    outline-color: var(--_yellow);
+  }
+
   .panel {
-    width: min(370px, calc(100vw - 24px));
-    height: min(540px, calc(100vh - 96px));
+    width: min(380px, calc(100vw - 28px));
+    height: min(550px, calc(100dvh - 96px));
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
-    background: var(--_bg);
-    border: 1px solid var(--_border);
-    border-radius: 16px;
-    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22);
+    background: var(--_paper);
+    border: 1px solid #0B0B0B;
+    border-radius: 4px;
     overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+    transform-origin: bottom right;
+    pointer-events: none;
+    box-shadow: none;
+    transition: opacity 0.26s var(--_ease), transform 0.26s var(--_ease), visibility 0.26s;
   }
 
-  .panel[hidden] {
-    display: none;
+  .panel.is-open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.28);
   }
 
   .header {
@@ -93,17 +105,30 @@ sheet.replaceSync(`
     justify-content: space-between;
     gap: 12px;
     padding: 14px 16px;
-    background: var(--_accent);
-    color: #ffffff;
+    background: #0B0B0B;
+    color: #FFFFFF;
+    border-bottom: 1px solid #0B0B0B;
   }
 
   .header-info {
     min-width: 0;
   }
 
+  .kicker {
+    font-family: var(--font-sub, 'Space Grotesk', ui-monospace, SFMono-Regular, monospace);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--_yellow);
+    margin-bottom: 2px;
+  }
+
   .agent-name {
-    font-weight: 700;
+    font-family: var(--font-sub, 'Space Grotesk', system-ui, sans-serif);
+    font-weight: 600;
     font-size: 15px;
+    letter-spacing: -0.02em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -113,84 +138,185 @@ sheet.replaceSync(`
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
-    opacity: 0.9;
+    margin-top: 2px;
+    font-family: var(--font-sub, 'Space Grotesk', system-ui, sans-serif);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
   }
 
   .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #4ade80;
+    width: 7px;
+    height: 7px;
+    border-radius: 0;
+    background: var(--_yellow);
     flex-shrink: 0;
   }
 
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .icon-btn {
-    border: none;
-    background: rgba(255, 255, 255, 0.16);
-    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: transparent;
+    color: #FFFFFF;
     width: 30px;
     height: 30px;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
   }
 
   .icon-btn:hover {
-    background: rgba(255, 255, 255, 0.28);
+    background: var(--_yellow);
+    color: #0B0B0B;
+    border-color: var(--_yellow);
   }
 
   .messages {
     flex: 1;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 14px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background: #f8fafc;
+    background:
+      radial-gradient(rgba(0, 0, 0, 0.13) 1px, transparent 1.2px) 0 0 / 22px 22px,
+      var(--_paper);
+  }
+
+  @keyframes khala-msg-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes khala-pulse {
+    0%, 80%, 100% {
+      opacity: 0.28;
+      transform: scale(0.85);
+    }
+    40% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   .msg {
-    max-width: 84%;
-    padding: 10px 13px;
-    border-radius: 14px;
-    white-space: pre-wrap;
+    max-width: 86%;
+    padding: 11px 13px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    line-height: 1.55;
     word-break: break-word;
+    animation: khala-msg-in 0.3s var(--_ease) both;
   }
 
   .msg.bot {
     align-self: flex-start;
     background: var(--_bg);
+    color: var(--_fg);
     border: 1px solid var(--_border);
-    border-bottom-left-radius: 4px;
   }
 
   .msg.user {
     align-self: flex-end;
-    background: var(--_accent);
-    color: #ffffff;
-    border-bottom-right-radius: 4px;
+    background: #0B0B0B;
+    color: #FFFFFF;
+    border: 1px solid #0B0B0B;
+  }
+
+  .msg.streaming {
+    white-space: pre-wrap;
+  }
+
+  .msg p {
+    margin: 0 0 8px;
+  }
+
+  .msg p:last-child {
+    margin-bottom: 0;
+  }
+
+  .msg ul,
+  .msg ol {
+    margin: 6px 0;
+    padding-left: 18px;
+  }
+
+  .msg ul:last-child,
+  .msg ol:last-child {
+    margin-bottom: 0;
+  }
+
+  .msg li + li {
+    margin-top: 4px;
+  }
+
+  .msg a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    padding: 0 1px;
+  }
+
+  .msg.bot a:hover {
+    background: var(--_yellow);
+    color: #0B0B0B;
+    text-decoration: none;
   }
 
   .msg.typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     color: var(--_muted);
-    font-style: italic;
+    font-size: 12.5px;
+  }
+
+  .typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .typing-dots span {
+    width: 6px;
+    height: 6px;
+    background: #0B0B0B;
+    display: inline-block;
+    animation: khala-pulse 1.1s ease-in-out infinite;
+  }
+
+  .typing-dots span:nth-child(2) {
+    animation-delay: 0.16s;
+  }
+
+  .typing-dots span:nth-child(3) {
+    animation-delay: 0.32s;
   }
 
   .suggestions {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    padding: 8px 14px;
-    background: #f8fafc;
+    padding: 10px 14px;
+    background: var(--_paper);
     border-top: 1px solid var(--_border);
   }
 
@@ -199,19 +325,23 @@ sheet.replaceSync(`
   }
 
   .chip {
-    border: 1px solid var(--_border);
+    border: 1px solid rgba(0, 0, 0, 0.22);
     background: var(--_bg);
     color: var(--_fg);
-    border-radius: 999px;
-    padding: 5px 10px;
+    border-radius: 4px;
+    padding: 6px 10px;
     font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
     text-align: left;
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.2s var(--_ease);
   }
 
   .chip:hover {
-    border-color: var(--_accent);
-    color: var(--_accent);
+    background: var(--_yellow);
+    border-color: #0B0B0B;
+    color: #0B0B0B;
+    transform: translateY(-1px);
   }
 
   .composer {
@@ -226,41 +356,89 @@ sheet.replaceSync(`
   .input {
     flex: 1;
     min-width: 0;
-    border: 1px solid var(--_border);
-    border-radius: 10px;
-    padding: 9px 12px;
-    background: var(--_surface);
+    border: 1px solid rgba(0, 0, 0, 0.22);
+    border-radius: 4px;
+    padding: 9px 11px;
+    background: var(--_paper);
+    color: var(--_fg);
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .input:focus {
+    background: var(--_bg);
+    border-color: #0B0B0B;
+    outline: none;
   }
 
   .send-btn {
-    border: none;
-    border-radius: 10px;
+    border: 1px solid #0B0B0B;
+    border-radius: 4px;
     padding: 9px 14px;
-    background: var(--_accent);
-    color: #ffffff;
+    background: #0B0B0B;
+    color: #FFFFFF;
     font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.2s var(--_ease);
+  }
+
+  .send-btn:hover:not(:disabled) {
+    background: var(--_yellow);
+    color: #0B0B0B;
+  }
+
+  .send-btn:active:not(:disabled) {
+    transform: scale(0.97);
   }
 
   .send-btn:disabled {
-    opacity: 0.55;
+    opacity: 0.45;
     cursor: not-allowed;
   }
 
   .powered {
     text-align: center;
-    font-size: 11px;
+    font-family: var(--font-sub, 'Space Grotesk', ui-monospace, SFMono-Regular, monospace);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: var(--_muted);
     padding: 4px 8px 8px;
     background: var(--_bg);
+  }
+
+  @media (max-width: 768px) {
+    :host {
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+    }
+    .launcher {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .panel,
+    .launcher,
+    .icon-btn,
+    .chip,
+    .input,
+    .send-btn {
+      transition: none;
+    }
+    .msg,
+    .typing-dots span {
+      animation: none;
+    }
   }
 `);
 
 const template = document.createElement('template');
 template.innerHTML = `
-  <section class="panel" role="dialog" aria-label="AI Support Chat" hidden>
+  <section class="panel" role="dialog" aria-label="AI Support Chat" aria-hidden="true">
     <header class="header">
       <div class="header-info">
+        <div class="kicker">[ AI SUPPORT ]</div>
         <div class="agent-name" data-el="agent-name">Support AI</div>
         <div class="tagline"><span class="dot" aria-hidden="true"></span><span data-el="tagline">Online</span></div>
       </div>
@@ -275,7 +453,7 @@ template.innerHTML = `
       <input type="text" class="input" data-el="input" placeholder="Type your question..." maxlength="2000" autocomplete="off" />
       <button type="submit" class="send-btn" data-el="send">Send</button>
     </form>
-    <div class="powered">Powered by Khala AI Agents</div>
+    <div class="powered">[ TAMYIZ™ INSTANT SUPPORT ]</div>
   </section>
   <button type="button" class="launcher" data-el="launcher" aria-expanded="false" aria-label="Chat with AI Support" title="Chat with AI Support">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -288,6 +466,108 @@ template.innerHTML = `
     </svg>
   </button>
 `;
+
+/**
+ * Append plain text with inline **bold** segments and clickable https:// URLs using safe DOM nodes.
+ */
+function appendInlineFormatted(parent, text) {
+  const tokenRe = /(\*\*[^*]+\*\*|https?:\/\/[^\s)]+)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = tokenRe.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parent.append(document.createTextNode(text.slice(lastIndex, match.index)));
+    }
+
+    const token = match[0];
+    if (token.startsWith('**') && token.endsWith('**')) {
+      const strong = document.createElement('strong');
+      strong.textContent = token.slice(2, -2);
+      parent.append(strong);
+    } else {
+      let url = token;
+      let trailing = '';
+      while (/[.,!?;:]$/.test(url)) {
+        trailing = url.slice(-1) + trailing;
+        url = url.slice(0, -1);
+      }
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = url;
+      parent.append(link);
+      if (trailing) parent.append(document.createTextNode(trailing));
+    }
+
+    lastIndex = match.index + token.length;
+  }
+
+  if (lastIndex < text.length) {
+    parent.append(document.createTextNode(text.slice(lastIndex)));
+  }
+}
+
+/**
+ * Safely render paragraphs, bullet lists, bold spans, and URLs without innerHTML.
+ */
+function renderFormattedText(container, text) {
+  container.replaceChildren();
+  const lines = String(text || '').split(/\r?\n/);
+  let currentList = null;
+  let listTag = null;
+  let paragraphLines = [];
+
+  const flushParagraph = () => {
+    if (paragraphLines.length === 0) return;
+    const p = document.createElement('p');
+    paragraphLines.forEach((line, idx) => {
+      if (idx > 0) p.append(document.createElement('br'));
+      appendInlineFormatted(p, line);
+    });
+    container.append(p);
+    paragraphLines = [];
+  };
+
+  const flushList = () => {
+    if (!currentList) return;
+    container.append(currentList);
+    currentList = null;
+    listTag = null;
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) {
+      flushParagraph();
+      flushList();
+      continue;
+    }
+
+    const bulletMatch = line.match(/^(?:[-*•])\s+(.+)$/);
+    const orderedMatch = line.match(/^\d+\.\s+(.+)$/);
+
+    if (bulletMatch || orderedMatch) {
+      flushParagraph();
+      const targetTag = orderedMatch ? 'ol' : 'ul';
+      if (!currentList || listTag !== targetTag) {
+        flushList();
+        currentList = document.createElement(targetTag);
+        listTag = targetTag;
+      }
+      const li = document.createElement('li');
+      appendInlineFormatted(li, (orderedMatch || bulletMatch)[1]);
+      currentList.append(li);
+    } else {
+      flushList();
+      paragraphLines.push(line);
+    }
+  }
+
+  flushParagraph();
+  flushList();
+}
 
 class KhalaSupportWidget extends HTMLElement {
   static get observedAttributes() {
@@ -317,6 +597,9 @@ class KhalaSupportWidget extends HTMLElement {
     this._history = [];
     this._config = null;
     this._busy = false;
+    this._isOpen = false;
+    this._scrollQueued = false;
+    this._streamToken = 0;
   }
 
   connectedCallback() {
@@ -328,7 +611,7 @@ class KhalaSupportWidget extends HTMLElement {
       this.sendMessage(this._els.input.value);
     });
     this.shadowRoot.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !this._els.panel.hidden) {
+      if (e.key === 'Escape' && this._isOpen) {
         this.close();
       }
     });
@@ -351,22 +634,27 @@ class KhalaSupportWidget extends HTMLElement {
   }
 
   open() {
-    this._els.panel.hidden = false;
+    this._isOpen = true;
+    this._els.panel.classList.add('is-open');
+    this._els.panel.setAttribute('aria-hidden', 'false');
     this._els.launcher.setAttribute('aria-expanded', 'true');
-    this._els.input.focus();
+    this._scrollToBottom();
+    requestAnimationFrame(() => this._els.input.focus());
   }
 
   close() {
-    this._els.panel.hidden = true;
+    this._isOpen = false;
+    this._els.panel.classList.remove('is-open');
+    this._els.panel.setAttribute('aria-hidden', 'true');
     this._els.launcher.setAttribute('aria-expanded', 'false');
     this._els.launcher.focus();
   }
 
   toggle() {
-    if (this._els.panel.hidden) {
-      this.open();
-    } else {
+    if (this._isOpen) {
       this.close();
+    } else {
+      this.open();
     }
   }
 
@@ -393,11 +681,21 @@ class KhalaSupportWidget extends HTMLElement {
   }
 
   resetConversation(fallbackGreeting) {
+    this._streamToken += 1;
     this._history = [];
     this._els.messages.replaceChildren();
     const greeting = this._config?.greeting || fallbackGreeting || 'Hi! How can I help you today?';
     this._appendMessage('bot', greeting);
     this._renderSuggestions(this._config?.suggestedQuestions || []);
+  }
+
+  _scrollToBottom() {
+    if (this._scrollQueued) return;
+    this._scrollQueued = true;
+    requestAnimationFrame(() => {
+      this._scrollQueued = false;
+      this._els.messages.scrollTop = this._els.messages.scrollHeight;
+    });
   }
 
   _renderSuggestions(questions) {
@@ -417,13 +715,81 @@ class KhalaSupportWidget extends HTMLElement {
     }
   }
 
-  _appendMessage(role, text, isTyping = false) {
+  _appendMessage(role, text) {
     const div = document.createElement('div');
-    div.className = `msg ${role}${isTyping ? ' typing' : ''}`;
-    div.textContent = text;
+    div.className = `msg ${role}`;
+    if (role === 'bot') {
+      renderFormattedText(div, text);
+    } else {
+      div.textContent = text;
+    }
     this._els.messages.append(div);
-    this._els.messages.scrollTop = this._els.messages.scrollHeight;
+    this._scrollToBottom();
     return div;
+  }
+
+  _appendTypingIndicator() {
+    const div = document.createElement('div');
+    div.className = 'msg bot typing';
+    const dots = document.createElement('span');
+    dots.className = 'typing-dots';
+    dots.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 3; i += 1) {
+      dots.append(document.createElement('span'));
+    }
+    const label = document.createElement('span');
+    label.textContent = 'Writing reply...';
+    div.append(dots, label);
+    this._els.messages.append(div);
+    this._scrollToBottom();
+    return div;
+  }
+
+  _streamBotMessage(fullText) {
+    const text = String(fullText || '');
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion || text.length < 24) {
+      return Promise.resolve(this._appendMessage('bot', text));
+    }
+
+    const token = ++this._streamToken;
+    const div = document.createElement('div');
+    div.className = 'msg bot streaming';
+    this._els.messages.append(div);
+
+    const totalFrames = 24;
+    let frame = 0;
+
+    return new Promise((resolve) => {
+      const step = () => {
+        if (token !== this._streamToken || !div.isConnected) {
+          resolve(div);
+          return;
+        }
+        frame += 1;
+        if (frame >= totalFrames) {
+          div.classList.remove('streaming');
+          renderFormattedText(div, text);
+          this._scrollToBottom();
+          resolve(div);
+          return;
+        }
+
+        const progress = frame / totalFrames;
+        let end = Math.ceil(text.length * progress);
+        const nextSpace = text.indexOf(' ', end);
+        if (nextSpace !== -1 && nextSpace - end < 12) {
+          end = nextSpace;
+        }
+        div.textContent = text.slice(0, end);
+        if (frame % 6 === 0) {
+          this._scrollToBottom();
+        }
+        requestAnimationFrame(step);
+      };
+
+      requestAnimationFrame(step);
+    });
   }
 
   async sendMessage(rawText) {
@@ -436,7 +802,7 @@ class KhalaSupportWidget extends HTMLElement {
     this._els.suggestions.hidden = true;
 
     this._appendMessage('user', text);
-    const typingEl = this._appendMessage('bot', 'Thinking...', true);
+    const typingEl = this._appendTypingIndicator();
 
     try {
       const res = await fetch(`${this.apiBase}/api/chat`, {
@@ -458,7 +824,7 @@ class KhalaSupportWidget extends HTMLElement {
       } else {
         this._history.push({ role: 'user', text });
         this._history.push({ role: 'model', text: data.reply });
-        this._appendMessage('bot', data.reply);
+        await this._streamBotMessage(data.reply);
       }
     } catch {
       typingEl.remove();
@@ -466,7 +832,9 @@ class KhalaSupportWidget extends HTMLElement {
     } finally {
       this._busy = false;
       this._els.send.disabled = false;
-      this._els.input.focus();
+      if (this._isOpen) {
+        this._els.input.focus();
+      }
     }
   }
 }
