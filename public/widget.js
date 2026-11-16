@@ -565,7 +565,7 @@ sheet.replaceSync(`
     display: flex;
     align-items: flex-end;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 10px 12px 12px;
     border-top: 1px solid var(--_border);
     background: var(--_bg);
   }
@@ -630,18 +630,6 @@ sheet.replaceSync(`
   .send-btn:disabled {
     opacity: 0.38;
     cursor: not-allowed;
-  }
-
-  .powered {
-    flex-shrink: 0;
-    text-align: center;
-    font-family: var(--font-sub, 'Space Grotesk', ui-monospace, SFMono-Regular, monospace);
-    font-size: 9.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--_muted);
-    padding: 2px 10px 8px;
-    background: var(--_bg);
   }
 
   /* Tablet */
@@ -720,7 +708,7 @@ sheet.replaceSync(`
       font-size: 12.5px;
     }
     .composer {
-      padding: 9px 10px;
+      padding: 9px 10px 11px;
       gap: 8px;
     }
     .input {
@@ -734,10 +722,6 @@ sheet.replaceSync(`
     .send-btn {
       width: 42px;
       height: 42px;
-    }
-    .powered {
-      font-size: 9px;
-      padding: 2px 8px 6px;
     }
   }
 
@@ -851,7 +835,6 @@ template.innerHTML = `
         </svg>
       </button>
     </form>
-    <div class="powered">[ TAMYIZ™ INSTANT SUPPORT ]</div>
   </section>
   <button type="button" class="launcher" data-el="launcher" aria-expanded="false" aria-label="Chat with AI Support" title="Chat with AI Support">
     <svg class="icon-bot" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
