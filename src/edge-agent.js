@@ -79,7 +79,7 @@ export async function generateEdgeReply({ client, message, history = [], env = {
           contents,
           generationConfig: {
             temperature: 0.4,
-            maxOutputTokens: 1024
+            maxOutputTokens: 600
           }
         })
       });

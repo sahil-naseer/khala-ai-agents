@@ -105,7 +105,7 @@ export async function generateAgentReply({ client, message, history = [] }) {
         config: {
           systemInstruction,
           temperature: 0.4,
-          maxOutputTokens: 1024,
+          maxOutputTokens: 600,
           abortSignal: AbortSignal.timeout(12_000)
         }
       });

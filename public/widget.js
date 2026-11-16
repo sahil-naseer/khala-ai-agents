@@ -8,7 +8,7 @@ sheet.replaceSync(`
     --_fg: var(--khala-fg, #0B0B0B);
     --_muted: var(--khala-muted, #5E5E59);
     --_border: var(--khala-border, rgba(0, 0, 0, 0.14));
-    --_ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --_ease: cubic-bezier(0.22, 1, 0.36, 1);
     position: fixed;
     right: 1.5rem;
     bottom: 1.5rem;
@@ -44,19 +44,19 @@ sheet.replaceSync(`
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.25);
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.22s var(--_ease), box-shadow 0.22s ease;
+    transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, transform 0.26s var(--_ease), box-shadow 0.24s ease;
   }
 
   .launcher:hover {
     background: var(--_yellow);
     color: #0B0B0B;
     border-color: #0B0B0B;
-    transform: translateY(-2px) scale(1.05);
+    transform: translateY(-2px) scale(1.06);
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32), 0 0 0 1px #0B0B0B;
   }
 
   .launcher:active {
-    transform: scale(0.96);
+    transform: scale(0.95);
   }
 
   .launcher:focus-visible,
@@ -73,22 +73,22 @@ sheet.replaceSync(`
   }
 
   .panel {
-    width: min(380px, calc(100vw - 28px));
-    height: min(550px, calc(100dvh - 96px));
+    width: min(384px, calc(100vw - 28px));
+    height: min(556px, calc(100dvh - 96px));
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
     background: var(--_paper);
     border: 1px solid #0B0B0B;
-    border-radius: 4px;
+    border-radius: 26px;
     overflow: hidden;
     visibility: hidden;
     opacity: 0;
-    transform: translateY(12px) scale(0.97);
+    transform: translateY(16px) scale(0.92);
     transform-origin: bottom right;
     pointer-events: none;
     box-shadow: none;
-    transition: opacity 0.26s var(--_ease), transform 0.26s var(--_ease), visibility 0.26s;
+    transition: opacity 0.34s var(--_ease), transform 0.34s var(--_ease), visibility 0.34s;
   }
 
   .panel.is-open {
@@ -96,7 +96,7 @@ sheet.replaceSync(`
     opacity: 1;
     transform: translateY(0) scale(1);
     pointer-events: auto;
-    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 24px 52px -12px rgba(0, 0, 0, 0.28);
   }
 
   .header {
@@ -104,7 +104,7 @@ sheet.replaceSync(`
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 16px 20px;
     background: #0B0B0B;
     color: #FFFFFF;
     border-bottom: 1px solid #0B0B0B;
@@ -147,9 +147,9 @@ sheet.replaceSync(`
   }
 
   .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
     background: var(--_yellow);
     flex-shrink: 0;
   }
@@ -157,7 +157,7 @@ sheet.replaceSync(`
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     flex-shrink: 0;
   }
 
@@ -165,65 +165,66 @@ sheet.replaceSync(`
     border: 1px solid rgba(255, 255, 255, 0.24);
     background: transparent;
     color: #FFFFFF;
-    width: 30px;
-    height: 30px;
-    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s var(--_ease);
   }
 
   .icon-btn:hover {
     background: var(--_yellow);
     color: #0B0B0B;
     border-color: var(--_yellow);
+    transform: scale(1.06);
   }
 
   .messages {
     flex: 1;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 14px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     background:
-      radial-gradient(rgba(0, 0, 0, 0.13) 1px, transparent 1.2px) 0 0 / 22px 22px,
+      radial-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1.2px) 0 0 / 22px 22px,
       var(--_paper);
   }
 
   @keyframes khala-msg-in {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(10px) scale(0.98);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
   }
 
-  @keyframes khala-pulse {
-    0%, 80%, 100% {
-      opacity: 0.28;
-      transform: scale(0.85);
+  @keyframes khala-wave {
+    0%, 60%, 100% {
+      opacity: 0.35;
+      transform: translateY(0);
     }
-    40% {
+    30% {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(-4px);
     }
   }
 
   .msg {
     max-width: 86%;
-    padding: 11px 13px;
-    border-radius: 4px;
+    padding: 12px 16px;
+    border-radius: 20px;
     font-size: 13.5px;
     line-height: 1.55;
     word-break: break-word;
-    animation: khala-msg-in 0.3s var(--_ease) both;
+    animation: khala-msg-in 0.32s var(--_ease) both;
   }
 
   .msg.bot {
@@ -231,6 +232,7 @@ sheet.replaceSync(`
     background: var(--_bg);
     color: var(--_fg);
     border: 1px solid var(--_border);
+    border-bottom-left-radius: 6px;
   }
 
   .msg.user {
@@ -238,10 +240,7 @@ sheet.replaceSync(`
     background: #0B0B0B;
     color: #FFFFFF;
     border: 1px solid #0B0B0B;
-  }
-
-  .msg.streaming {
-    white-space: pre-wrap;
+    border-bottom-right-radius: 6px;
   }
 
   .msg p {
@@ -272,7 +271,8 @@ sheet.replaceSync(`
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 2px;
-    padding: 0 1px;
+    border-radius: 4px;
+    padding: 0 2px;
   }
 
   .msg.bot a:hover {
@@ -287,6 +287,8 @@ sheet.replaceSync(`
     gap: 8px;
     color: var(--_muted);
     font-size: 12.5px;
+    border-radius: 999px;
+    padding: 10px 16px;
   }
 
   .typing-dots {
@@ -296,11 +298,12 @@ sheet.replaceSync(`
   }
 
   .typing-dots span {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
     background: #0B0B0B;
     display: inline-block;
-    animation: khala-pulse 1.1s ease-in-out infinite;
+    animation: khala-wave 1.15s ease-in-out infinite;
   }
 
   .typing-dots span:nth-child(2) {
@@ -314,8 +317,8 @@ sheet.replaceSync(`
   .suggestions {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px 14px;
+    gap: 7px;
+    padding: 10px 16px;
     background: var(--_paper);
     border-top: 1px solid var(--_border);
   }
@@ -325,16 +328,16 @@ sheet.replaceSync(`
   }
 
   .chip {
-    border: 1px solid rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     background: var(--_bg);
     color: var(--_fg);
-    border-radius: 4px;
-    padding: 6px 10px;
+    border-radius: 999px;
+    padding: 7px 14px;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     text-align: left;
-    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.2s var(--_ease);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.22s var(--_ease);
   }
 
   .chip:hover {
@@ -348,7 +351,7 @@ sheet.replaceSync(`
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 10px 14px;
     border-top: 1px solid var(--_border);
     background: var(--_bg);
   }
@@ -356,12 +359,12 @@ sheet.replaceSync(`
   .input {
     flex: 1;
     min-width: 0;
-    border: 1px solid rgba(0, 0, 0, 0.22);
-    border-radius: 4px;
-    padding: 9px 11px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 999px;
+    padding: 10px 16px;
     background: var(--_paper);
     color: var(--_fg);
-    transition: background-color 0.18s ease, border-color 0.18s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
   }
 
   .input:focus {
@@ -372,13 +375,13 @@ sheet.replaceSync(`
 
   .send-btn {
     border: 1px solid #0B0B0B;
-    border-radius: 4px;
-    padding: 9px 14px;
+    border-radius: 999px;
+    padding: 10px 18px;
     background: #0B0B0B;
     color: #FFFFFF;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.18s ease, color 0.18s ease, transform 0.2s var(--_ease);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.22s var(--_ease);
   }
 
   .send-btn:hover:not(:disabled) {
@@ -387,7 +390,7 @@ sheet.replaceSync(`
   }
 
   .send-btn:active:not(:disabled) {
-    transform: scale(0.97);
+    transform: scale(0.96);
   }
 
   .send-btn:disabled {
@@ -402,7 +405,7 @@ sheet.replaceSync(`
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--_muted);
-    padding: 4px 8px 8px;
+    padding: 3px 10px 9px;
     background: var(--_bg);
   }
 
@@ -414,6 +417,9 @@ sheet.replaceSync(`
     .launcher {
       width: 44px;
       height: 44px;
+    }
+    .panel {
+      border-radius: 22px;
     }
   }
 
@@ -754,10 +760,29 @@ class KhalaSupportWidget extends HTMLElement {
 
     const token = ++this._streamToken;
     const div = document.createElement('div');
-    div.className = 'msg bot streaming';
-    this._els.messages.append(div);
+    div.className = 'msg bot';
+    renderFormattedText(div, text);
 
-    const totalFrames = 24;
+    const textEntries = [];
+    let totalChars = 0;
+    const walker = document.createTreeWalker(div, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      const full = node.nodeValue || '';
+      if (full.length > 0) {
+        textEntries.push({ node, full });
+        totalChars += full.length;
+        node.nodeValue = '';
+      }
+    }
+
+    this._els.messages.append(div);
+    if (totalChars === 0) {
+      this._scrollToBottom();
+      return Promise.resolve(div);
+    }
+
+    const totalFrames = 28;
     let frame = 0;
 
     return new Promise((resolve) => {
@@ -766,24 +791,31 @@ class KhalaSupportWidget extends HTMLElement {
           resolve(div);
           return;
         }
+
         frame += 1;
-        if (frame >= totalFrames) {
-          div.classList.remove('streaming');
-          renderFormattedText(div, text);
-          this._scrollToBottom();
-          resolve(div);
-          return;
+        const t = Math.min(1, frame / totalFrames);
+        const eased = 1 - Math.pow(1 - t, 2.2);
+        let remaining = t >= 1 ? totalChars : Math.ceil(totalChars * eased);
+
+        for (const entry of textEntries) {
+          if (remaining <= 0) {
+            entry.node.nodeValue = '';
+          } else if (remaining >= entry.full.length) {
+            entry.node.nodeValue = entry.full;
+            remaining -= entry.full.length;
+          } else {
+            entry.node.nodeValue = entry.full.slice(0, remaining);
+            remaining = 0;
+          }
         }
 
-        const progress = frame / totalFrames;
-        let end = Math.ceil(text.length * progress);
-        const nextSpace = text.indexOf(' ', end);
-        if (nextSpace !== -1 && nextSpace - end < 12) {
-          end = nextSpace;
-        }
-        div.textContent = text.slice(0, end);
-        if (frame % 6 === 0) {
+        if (frame % 7 === 0 || t >= 1) {
           this._scrollToBottom();
+        }
+
+        if (t >= 1) {
+          resolve(div);
+          return;
         }
         requestAnimationFrame(step);
       };

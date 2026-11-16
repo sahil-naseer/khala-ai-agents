@@ -32,39 +32,57 @@ export function getPublicClientConfig(client) {
   };
 }
 
+const catalogInflight = new Map();
+
+async function refreshCatalog(client) {
+  if (catalogInflight.has(client.id)) {
+    return catalogInflight.get(client.id);
+  }
+  const job = (async () => {
+    try {
+      const res = await fetch(client.catalogUrl, { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) return catalogCache.get(client.id)?.items || [];
+      const data = await res.json();
+      const rawProducts = Array.isArray(data?.products) ? data.products : [];
+      const siteUrl = (client.siteUrl || '').replace(/\/$/, '');
+
+      const items = rawProducts.map((p) => ({
+        name: unescapeHtml(p.name),
+        price: p.price,
+        status: p.status || (p.available ? 'on-sale' : 'soon'),
+        tagline: unescapeHtml(p.tagline),
+        category: unescapeHtml(p.category || 'E-Books'),
+        chapters: Array.isArray(p.tableOfContents) ? p.tableOfContents.map(unescapeHtml) : [],
+        url: siteUrl && p.slug ? `${siteUrl}/edition/${p.slug}` : ''
+      }));
+
+      catalogCache.set(client.id, { items, fetchedAt: Date.now() });
+      return items;
+    } catch {
+      return catalogCache.get(client.id)?.items || [];
+    } finally {
+      catalogInflight.delete(client.id);
+    }
+  })();
+  catalogInflight.set(client.id, job);
+  return job;
+}
+
 /**
- * Fetch and cache live product catalog if the client config defines catalogUrl.
+ * Fetch and cache live product catalog with stale-while-revalidate if catalogUrl is configured.
  */
 export async function fetchLiveCatalog(client) {
   if (!client?.catalogUrl) return [];
 
   const cached = catalogCache.get(client.id);
-  if (cached && Date.now() - cached.fetchedAt < CATALOG_TTL_MS) {
+  if (cached) {
+    if (Date.now() - cached.fetchedAt >= CATALOG_TTL_MS) {
+      refreshCatalog(client).catch(() => {});
+    }
     return cached.items;
   }
 
-  try {
-    const res = await fetch(client.catalogUrl, { signal: AbortSignal.timeout(5000) });
-    if (!res.ok) return cached?.items || [];
-    const data = await res.json();
-    const rawProducts = Array.isArray(data?.products) ? data.products : [];
-    const siteUrl = (client.siteUrl || '').replace(/\/$/, '');
-
-    const items = rawProducts.map((p) => ({
-      name: unescapeHtml(p.name),
-      price: p.price,
-      status: p.status || (p.available ? 'on-sale' : 'soon'),
-      tagline: unescapeHtml(p.tagline),
-      category: unescapeHtml(p.category || 'E-Books'),
-      chapters: Array.isArray(p.tableOfContents) ? p.tableOfContents.map(unescapeHtml) : [],
-      url: siteUrl && p.slug ? `${siteUrl}/edition/${p.slug}` : ''
-    }));
-
-    catalogCache.set(client.id, { items, fetchedAt: Date.now() });
-    return items;
-  } catch {
-    return cached?.items || [];
-  }
+  return refreshCatalog(client);
 }
 
 /**
@@ -78,12 +96,13 @@ export function buildSystemPrompt(client, catalog = []) {
 
   const catalogText = catalog.length > 0
     ? [
-        `Total published/listed items currently in catalog: ${catalog.length}`,
+        `Total items in catalog: ${catalog.length}`,
         ...catalog.map((item, i) => {
           const priceStr = typeof item.price === 'number' ? `₹${item.price}` : 'Price TBA';
-          const tocStr = item.chapters.length > 0 ? ` | Chapters (${item.chapters.length}): ${item.chapters.join('; ')}` : '';
-          const urlStr = item.url ? ` | Link: ${item.url}` : '';
-          return `${i + 1}. "${item.name}" — ${priceStr} [${item.status}] — ${item.tagline}${tocStr}${urlStr}`;
+          const shortTagline = item.tagline.length > 90 ? `${item.tagline.slice(0, 87)}...` : item.tagline;
+          const tocStr = item.chapters.length > 0 ? ` | ${item.chapters.length} ch: ${item.chapters.join(', ')}` : '';
+          const urlStr = item.url ? ` | ${item.url}` : '';
+          return `${i + 1}. "${item.name}" (${priceStr}, ${item.status}) — ${shortTagline}${tocStr}${urlStr}`;
         })
       ].join('\n')
     : '';
