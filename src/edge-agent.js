@@ -61,14 +61,12 @@ export async function generateEdgeReply({ client, message, history = [], env = {
     };
   }
 
-  if (Array.isArray(history) && history.length === 0) {
-    const exactMatch = matchExactFaq(client, message);
-    if (exactMatch) {
-      return { reply: exactMatch, mode: 'instant' };
-    }
+  const exactMatch = matchExactFaq(client, message);
+  if (exactMatch) {
+    return { reply: exactMatch, mode: 'instant' };
   }
 
-  const primaryModel = env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const primaryModel = env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
   const candidateModels = [...new Set([primaryModel, ...CANDIDATE_MODELS])];
   const catalog = await fetchLiveCatalog(client);
   const systemInstruction = buildSystemPrompt(client, catalog);
@@ -81,7 +79,7 @@ export async function generateEdgeReply({ client, message, history = [], env = {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(12_000),
+        signal: AbortSignal.timeout(6_000),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: systemInstruction }] },
           contents,
@@ -106,7 +104,7 @@ export async function generateEdgeReply({ client, message, history = [], env = {
       const data = await res.json();
       const parts = data?.candidates?.[0]?.content?.parts;
       const replyText = Array.isArray(parts)
-        ? parts.map((p) => p?.text || '').join('').trim()
+        ? parts.filter((p) => !p?.thought).map((p) => p?.text || '').join('').trim()
         : '';
 
       if (replyText) {

@@ -1,10 +1,88 @@
 export const CANDIDATE_MODELS = [
-  'gemini-3.5-flash-lite',
   'gemini-3.1-flash-lite',
-  'gemini-3.7-flash'
+  'gemini-3-flash-preview',
+  'gemini-3.5-flash-lite'
 ];
 
-const catalogCache = new Map();
+const catalogCache = new Map([
+  ['tamyiz', {
+    fetchedAt: 0,
+    items: [
+      {
+        name: 'Four Minutes Fast',
+        price: 550,
+        status: 'on-sale',
+        tagline: 'Six days. One signature. Eleven years to undo. A quiet, gripping novella about a daughter, her father, and the last window to say what matters.',
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/four-minutes-fast'
+      },
+      {
+        name: 'The Girl Who Sold Dreams',
+        price: 499,
+        status: 'on-sale',
+        tagline: "In a city that can't sleep, a 16-year-old girl sells dreams in jars until she steals one hiding a seven-year-old secret.",
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/the-girl-who-sold-dreams'
+      },
+      {
+        name: 'The Last Letter from the Sea',
+        price: 449,
+        status: 'on-sale',
+        tagline: 'A letter arrives from forty years ago. It knows what will happen next.',
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/the-last-letter-from-the-sea'
+      },
+      {
+        name: 'The Built Mind',
+        price: 400,
+        status: 'on-sale',
+        tagline: 'Stop relying on willpower. Build a mind that focuses, learns and recovers by design.',
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/the-built-mind'
+      },
+      {
+        name: 'The First 12 Weeks',
+        price: 349,
+        status: 'on-sale',
+        tagline: 'A practical, compassionate guide to navigating postpartum recovery, newborn care, rest, and emotional well-being during the first 12 weeks after birth.',
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/the-first-12-weeks'
+      },
+      {
+        name: 'Start Selling Digital Products From Zero',
+        price: 699,
+        status: 'on-sale',
+        tagline: 'A step-by-step playbook to find a niche, build, price and launch your first digital product, with no audience and no budget.',
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/start-selling-digital-products-from-zero'
+      },
+      {
+        name: 'The AI Playbook',
+        price: 299,
+        status: 'on-sale',
+        tagline: "Master prompting and choose the right AI tools. A beginner's guide to using AI well.",
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/the-ai-playbook'
+      },
+      {
+        name: 'Stay Safe Online',
+        price: 525,
+        status: 'on-sale',
+        tagline: 'How to avoid scams, hacks and data breaches. Plain language, no technical background needed.',
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/stay-safe-online'
+      },
+      {
+        name: 'Research, Write & Cite with AI',
+        price: 629,
+        status: 'on-sale',
+        tagline: 'Use AI for research without getting caught out by fake sources.',
+        chapters: [],
+        url: 'https://tamyiz.pages.dev/edition/research-write-and-cite-with-ai'
+      }
+    ]
+  }]
+]);
 const CATALOG_TTL_MS = 5 * 60 * 1000;
 
 /**
@@ -145,12 +223,20 @@ function normalizeQuestion(text) {
     .trim();
 }
 
+const GREETING_RE = /^(?:hi|hello|hey|salam|salaam|assalamu alaikum|assalam o alaikum|aoa|hi there|hello there)$/;
+
 /**
- * Return an instant FAQ answer when the user's message matches a configured FAQ question.
+ * Return an instant FAQ or greeting answer when the user's message matches a configured FAQ or greeting.
  */
 export function matchExactFaq(client, userMessage) {
   const target = normalizeQuestion(userMessage);
   if (!target) return null;
+
+  if (GREETING_RE.test(target)) {
+    const name = client?.businessName || 'us';
+    return `Hi! Welcome to ${name}. I can help you explore our 9 PDF e-books, bundle discounts (20% off 2 books, 25% off 3+), Razorpay checkout, or recovering a download link. What would you like to know?`;
+  }
+
   const faqs = client?.knowledgeBase?.faqs || [];
   for (const faq of faqs) {
     if (normalizeQuestion(faq.question) === target) {

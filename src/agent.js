@@ -90,15 +90,13 @@ export async function generateAgentReply({ client, message, history = [] }) {
     };
   }
 
-  if (Array.isArray(history) && history.length === 0) {
-    const exactMatch = matchExactFaq(client, message);
-    if (exactMatch) {
-      return { reply: exactMatch, mode: 'instant' };
-    }
+  const exactMatch = matchExactFaq(client, message);
+  if (exactMatch) {
+    return { reply: exactMatch, mode: 'instant' };
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
   const candidateModels = [...new Set([primaryModel, ...CANDIDATE_MODELS])];
   const catalog = await fetchLiveCatalog(client);
   const systemInstruction = buildSystemPrompt(client, catalog);
@@ -114,7 +112,7 @@ export async function generateAgentReply({ client, message, history = [] }) {
           systemInstruction,
           temperature: 0.4,
           maxOutputTokens: 600,
-          abortSignal: AbortSignal.timeout(12_000)
+          abortSignal: AbortSignal.timeout(6_000)
         }
       });
 
