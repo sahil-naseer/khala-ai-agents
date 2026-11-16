@@ -7,11 +7,16 @@ sheet.replaceSync(`
     --_bg: var(--khala-bg, #FFFFFF);
     --_fg: var(--khala-fg, #0B0B0B);
     --_muted: var(--khala-muted, #5E5E59);
-    --_border: var(--khala-border, rgba(0, 0, 0, 0.14));
+    --_border: var(--khala-border, rgba(0, 0, 0, 0.12));
+    --_danger: #B91C1C;
+    --_danger-bg: #FEF2F2;
+    --_danger-border: rgba(185, 28, 28, 0.25);
     --_ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --_vv-height: 100dvh;
+    --_kb-offset: 0px;
     position: fixed;
-    right: 1.5rem;
-    bottom: 1.5rem;
+    right: 24px;
+    bottom: 24px;
     z-index: 2147483000;
     display: flex;
     flex-direction: column;
@@ -34,6 +39,17 @@ sheet.replaceSync(`
     -webkit-tap-highlight-color: transparent;
   }
 
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 11, 11, 0.32);
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    transition: opacity 0.28s var(--_ease);
+    display: none;
+  }
+
   .launcher {
     position: relative;
     pointer-events: auto;
@@ -48,8 +64,8 @@ sheet.replaceSync(`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.25);
-    transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, transform 0.26s var(--_ease), box-shadow 0.24s ease;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.22);
+    transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, transform 0.26s var(--_ease), opacity 0.22s ease, box-shadow 0.24s ease;
   }
 
   .launcher svg {
@@ -77,22 +93,26 @@ sheet.replaceSync(`
     transform: rotate(0deg) scale(1);
   }
 
-  .launcher:hover {
-    background: var(--_yellow);
-    color: #0B0B0B;
-    border-color: #0B0B0B;
-    transform: translateY(-2px) scale(1.06);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32), 0 0 0 1px #0B0B0B;
+  @media (hover: hover) {
+    .launcher:hover {
+      background: var(--_yellow);
+      color: #0B0B0B;
+      border-color: #0B0B0B;
+      transform: translateY(-2px) scale(1.06);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32), 0 0 0 1px #0B0B0B;
+    }
   }
 
   .launcher:active {
-    transform: scale(0.95);
+    transform: scale(0.94);
   }
 
   .launcher:focus-visible,
   .icon-btn:focus-visible,
   .chip:focus-visible,
   .send-btn:focus-visible,
+  .scroll-bottom-btn:focus-visible,
+  .retry-btn:focus-visible,
   .input:focus-visible {
     outline: 2px solid #0B0B0B;
     outline-offset: 2px;
@@ -103,8 +123,9 @@ sheet.replaceSync(`
   }
 
   .panel {
-    width: min(376px, calc(100vw - 28px));
-    height: min(520px, calc(100dvh - 96px));
+    position: relative;
+    width: min(380px, calc(100vw - 32px));
+    height: min(540px, calc(100dvh - 104px));
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
@@ -112,9 +133,10 @@ sheet.replaceSync(`
     border: 1px solid #0B0B0B;
     border-radius: 24px;
     overflow: hidden;
+    overscroll-behavior: contain;
     visibility: hidden;
     opacity: 0;
-    transform: translateY(14px) scale(0.94);
+    transform: translateY(14px) scale(0.95);
     transform-origin: bottom right;
     pointer-events: none;
     box-shadow: none;
@@ -130,35 +152,47 @@ sheet.replaceSync(`
   }
 
   .header {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 15px 18px;
+    gap: 10px;
+    padding: 12px 16px;
     background: #0B0B0B;
     color: #FFFFFF;
     border-bottom: 1px solid #0B0B0B;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: var(--_yellow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
   .header-info {
     min-width: 0;
   }
 
-  .kicker {
-    font-family: var(--font-sub, 'Space Grotesk', ui-monospace, SFMono-Regular, monospace);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--_yellow);
-    margin-bottom: 2px;
-  }
-
   .agent-name {
     font-family: var(--font-sub, 'Space Grotesk', system-ui, sans-serif);
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14.5px;
     letter-spacing: -0.02em;
+    line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -170,33 +204,43 @@ sheet.replaceSync(`
     gap: 6px;
     margin-top: 2px;
     font-family: var(--font-sub, 'Space Grotesk', system-ui, sans-serif);
-    font-size: 10.5px;
+    font-size: 10px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(255, 255, 255, 0.74);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--_yellow);
     flex-shrink: 0;
+    transition: background-color 0.2s ease;
+  }
+
+  :host([data-offline="true"]) .dot {
+    background: #9CA3AF;
   }
 
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-shrink: 0;
   }
 
   .icon-btn {
-    border: 1px solid rgba(255, 255, 255, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     background: transparent;
     color: #FFFFFF;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
     border-radius: 50%;
     cursor: pointer;
     display: inline-flex;
@@ -205,24 +249,71 @@ sheet.replaceSync(`
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s var(--_ease);
   }
 
-  .icon-btn:hover {
-    background: var(--_yellow);
-    color: #0B0B0B;
-    border-color: var(--_yellow);
-    transform: scale(1.06);
+  @media (hover: hover) {
+    .icon-btn:hover {
+      background: var(--_yellow);
+      color: #0B0B0B;
+      border-color: var(--_yellow);
+      transform: scale(1.06);
+    }
+  }
+
+  .icon-btn:active {
+    transform: scale(0.93);
+  }
+
+  .messages-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .messages {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 14px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     background:
-      radial-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1.2px) 0 0 / 22px 22px,
+      radial-gradient(rgba(0, 0, 0, 0.11) 1px, transparent 1.2px) 0 0 / 22px 22px,
       var(--_paper);
+  }
+
+  .scroll-bottom-btn {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    z-index: 2;
+    border: 1px solid #0B0B0B;
+    border-radius: 999px;
+    background: var(--_bg);
+    color: #0B0B0B;
+    padding: 6px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.22s var(--_ease), background-color 0.2s ease;
+  }
+
+  .scroll-bottom-btn.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .scroll-bottom-btn:hover {
+    background: var(--_yellow);
   }
 
   @keyframes khala-msg-in {
@@ -239,7 +330,7 @@ sheet.replaceSync(`
   @keyframes khala-line-in {
     from {
       opacity: 0;
-      transform: translateY(6px);
+      transform: translateY(5px);
     }
     to {
       opacity: 1;
@@ -258,38 +349,90 @@ sheet.replaceSync(`
     }
   }
 
-  .msg {
-    max-width: 88%;
-    padding: 11px 15px;
-    border-radius: 20px;
-    font-size: 13.5px;
-    line-height: 1.55;
-    word-break: break-word;
+  .msg-row {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
     animation: khala-msg-in 0.28s var(--_ease) both;
   }
 
+  .msg-row.user {
+    align-items: flex-end;
+  }
+
+  .msg-row.bot {
+    align-items: flex-start;
+  }
+
+  .msg {
+    max-width: 85%;
+    padding: 11px 14px;
+    border-radius: 18px;
+    font-size: 13.5px;
+    line-height: 1.52;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   .msg.bot {
-    align-self: flex-start;
     background: var(--_bg);
     color: var(--_fg);
     border: 1px solid var(--_border);
-    border-bottom-left-radius: 6px;
+    border-bottom-left-radius: 4px;
   }
 
   .msg.user {
-    align-self: flex-end;
     background: #0B0B0B;
     color: #FFFFFF;
     border: 1px solid #0B0B0B;
-    border-bottom-right-radius: 6px;
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg.bot.is-error {
+    background: var(--_danger-bg);
+    border-color: var(--_danger-border);
+    color: #7F1D1D;
+  }
+
+  .msg-meta {
+    font-size: 10px;
+    line-height: 1.2;
+    color: var(--_muted);
+    margin-top: 3px;
+    padding: 0 4px;
+    user-select: none;
+  }
+
+  .retry-btn {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #0B0B0B;
+    border-radius: 999px;
+    background: #FFFFFF;
+    color: #0B0B0B;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.18s var(--_ease);
+  }
+
+  .retry-btn:hover {
+    background: var(--_yellow);
+  }
+
+  .retry-btn:active {
+    transform: scale(0.96);
   }
 
   .msg.bot.is-revealing p,
   .msg.bot.is-revealing li,
   .msg.bot.is-revealing h3,
   .msg.bot.is-revealing h4 {
-    animation: khala-line-in 0.28s var(--_ease) both;
-    animation-delay: calc(var(--line-idx, 0) * 45ms);
+    animation: khala-line-in 0.26s var(--_ease) both;
+    animation-delay: calc(var(--line-idx, 0) * 40ms);
   }
 
   .msg p {
@@ -354,7 +497,7 @@ sheet.replaceSync(`
     color: var(--_muted);
     font-size: 12.5px;
     border-radius: 999px;
-    padding: 10px 16px;
+    padding: 9px 15px;
   }
 
   .typing-dots {
@@ -364,8 +507,8 @@ sheet.replaceSync(`
   }
 
   .typing-dots span {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: #0B0B0B;
     display: inline-block;
@@ -389,30 +532,40 @@ sheet.replaceSync(`
   }
 
   .chip {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.18);
     background: var(--_bg);
     color: var(--_fg);
     border-radius: 999px;
     padding: 7px 13px;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 500;
     cursor: pointer;
     text-align: left;
+    line-height: 1.35;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.22s var(--_ease);
   }
 
-  .chip:hover {
+  @media (hover: hover) {
+    .chip:hover {
+      background: var(--_yellow);
+      border-color: #0B0B0B;
+      color: #0B0B0B;
+      transform: translateY(-1px);
+    }
+  }
+
+  .chip:active {
     background: var(--_yellow);
     border-color: #0B0B0B;
-    color: #0B0B0B;
-    transform: translateY(-1px);
+    transform: scale(0.97);
   }
 
   .composer {
+    flex-shrink: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 8px;
-    padding: 10px 14px;
+    padding: 10px 12px;
     border-top: 1px solid var(--_border);
     background: var(--_bg);
   }
@@ -420,12 +573,21 @@ sheet.replaceSync(`
   .input {
     flex: 1;
     min-width: 0;
+    min-height: 40px;
+    max-height: 104px;
+    resize: none;
+    overflow-y: hidden;
     border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 999px;
-    padding: 9px 15px;
+    border-radius: 20px;
+    padding: 9px 14px;
+    line-height: 1.4;
     background: var(--_paper);
     color: var(--_fg);
     transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .input::placeholder {
+    color: var(--_muted);
   }
 
   .input:focus {
@@ -435,121 +597,194 @@ sheet.replaceSync(`
   }
 
   .send-btn {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
     border: 1px solid #0B0B0B;
-    border-radius: 999px;
-    padding: 9px 17px;
+    border-radius: 50%;
     background: #0B0B0B;
     color: #FFFFFF;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.22s var(--_ease);
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.22s var(--_ease);
   }
 
-  .send-btn:hover:not(:disabled) {
-    background: var(--_yellow);
-    color: #0B0B0B;
+  @media (hover: hover) {
+    .send-btn:hover:not(:disabled) {
+      background: var(--_yellow);
+      color: #0B0B0B;
+    }
   }
 
   .send-btn:active:not(:disabled) {
-    transform: scale(0.96);
+    transform: scale(0.94);
   }
 
   .send-btn:disabled {
-    opacity: 0.45;
+    opacity: 0.38;
     cursor: not-allowed;
   }
 
   .powered {
+    flex-shrink: 0;
     text-align: center;
     font-family: var(--font-sub, 'Space Grotesk', ui-monospace, SFMono-Regular, monospace);
-    font-size: 10px;
+    font-size: 9.5px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--_muted);
-    padding: 3px 10px 9px;
+    padding: 2px 10px 8px;
     background: var(--_bg);
   }
 
-  @media (max-width: 768px), (pointer: coarse) {
-    .launcher {
-      width: 44px;
-      height: 44px;
+  /* Tablet */
+  @media (min-width: 640px) and (max-width: 768px) {
+    :host {
+      right: 18px;
+      bottom: 18px;
     }
+    .panel {
+      width: 368px;
+      height: min(520px, calc(100dvh - 96px));
+      border-radius: 22px;
+      margin-bottom: 12px;
+    }
+  }
+
+  @media (pointer: coarse) {
     .input {
       font-size: 16px;
     }
   }
 
+  /* Dedicated mobile layout (360px - 430px and <= 639px) */
   @media (max-width: 639px) {
     :host {
-      right: max(12px, env(safe-area-inset-right));
-      bottom: max(12px, env(safe-area-inset-bottom));
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+    }
+    :host([data-open="true"]) {
+      right: max(10px, env(safe-area-inset-right));
+      bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    .backdrop {
+      display: block;
+    }
+    :host([data-open="true"]) .backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .launcher {
+      width: 46px;
+      height: 46px;
+    }
+    :host([data-open="true"]) .launcher {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.8);
     }
     .panel {
-      width: min(328px, calc(100vw - 24px));
-      height: min(420px, calc(100dvh - 96px));
-      margin-bottom: 8px;
+      width: calc(100vw - 20px);
+      max-width: 420px;
+      height: min(520px, calc(var(--_vv-height, 100dvh) - 24px));
+      max-height: calc(var(--_vv-height, 100dvh) - 20px);
+      margin-bottom: var(--_kb-offset, 0px);
       border-radius: 22px;
+      transform: translateY(20px) scale(0.97);
+      transform-origin: bottom center;
     }
     .header {
-      padding: 12px 15px;
-    }
-    .kicker {
-      font-size: 9px;
-    }
-    .agent-name {
-      font-size: 14px;
-    }
-    .tagline {
-      font-size: 9.5px;
-    }
-    .icon-btn {
-      width: 32px;
-      height: 32px;
+      padding: 11px 14px;
     }
     .messages {
       padding: 12px;
-      gap: 8px;
+      gap: 9px;
     }
     .msg {
-      padding: 9px 13px;
-      font-size: 13px;
-      border-radius: 17px;
+      max-width: 86%;
+      padding: 10px 13px;
+      font-size: 14px;
     }
     .chip {
-      padding: 6px 12px;
-      font-size: 12px;
+      padding: 8px 13px;
+      font-size: 12.5px;
     }
     .composer {
-      padding: 8px 10px;
-      gap: 6px;
+      padding: 9px 10px;
+      gap: 8px;
     }
     .input {
-      padding: 8px 13px;
-      min-height: 38px;
+      font-size: 16px;
+      min-height: 42px;
+      padding: 9px 14px;
+      border-radius: 21px;
     }
     .send-btn {
-      padding: 0 14px;
-      min-height: 38px;
-      font-size: 13px;
+      width: 42px;
+      height: 42px;
     }
     .powered {
       font-size: 9px;
-      padding: 2px 8px 7px;
+      padding: 2px 8px 6px;
+    }
+  }
+
+  /* Compact small phones (320px - 359px) */
+  @media (max-width: 359px) {
+    :host {
+      right: max(10px, env(safe-area-inset-right));
+      bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    :host([data-open="true"]) {
+      right: max(6px, env(safe-area-inset-right));
+      bottom: max(8px, env(safe-area-inset-bottom));
+    }
+    .panel {
+      width: calc(100vw - 12px);
+      height: calc(var(--_vv-height, 100dvh) - 16px);
+      max-height: calc(var(--_vv-height, 100dvh) - 16px);
+      border-radius: 18px;
+    }
+    .header {
+      padding: 10px 12px;
+    }
+    .avatar {
+      width: 26px;
+      height: 26px;
+    }
+    .agent-name {
+      font-size: 13.5px;
+    }
+    .messages {
+      padding: 10px;
+    }
+    .msg {
+      max-width: 90%;
+      padding: 9px 12px;
+      font-size: 13.5px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .backdrop,
     .panel,
     .launcher,
     .launcher svg,
     .icon-btn,
     .chip,
     .input,
-    .send-btn {
+    .send-btn,
+    .scroll-bottom-btn,
+    .retry-btn {
       transition: none;
     }
-    .msg,
+    .msg-row,
     .msg.bot.is-revealing p,
     .msg.bot.is-revealing li,
     .msg.bot.is-revealing h3,
@@ -563,22 +798,52 @@ sheet.replaceSync(`
 
 const template = document.createElement('template');
 template.innerHTML = `
+  <div class="backdrop" data-el="backdrop" aria-hidden="true"></div>
   <section class="panel" role="dialog" aria-label="AI Support Chat" aria-hidden="true">
     <header class="header">
-      <div class="header-info">
-        <div class="kicker">[ AI SUPPORT ]</div>
-        <div class="agent-name" data-el="agent-name">Support AI</div>
-        <div class="tagline"><span class="dot" aria-hidden="true"></span><span data-el="tagline">Online</span></div>
+      <div class="header-brand">
+        <div class="avatar" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 8V4H8" />
+            <rect width="16" height="12" x="4" y="8" rx="2" />
+            <path d="M2 14h2" />
+            <path d="M20 14h2" />
+            <path d="M15 13v2" />
+            <path d="M9 13v2" />
+          </svg>
+        </div>
+        <div class="header-info">
+          <div class="agent-name" data-el="agent-name">Support AI</div>
+          <div class="tagline"><span class="dot" aria-hidden="true"></span><span data-el="tagline">Online</span></div>
+        </div>
       </div>
       <div class="header-actions">
-        <button type="button" class="icon-btn" data-el="reset" title="New conversation" aria-label="New conversation">&#x21bb;</button>
-        <button type="button" class="icon-btn" data-el="close" title="Close chat" aria-label="Close chat">&#x2715;</button>
+        <button type="button" class="icon-btn" data-el="reset" title="New conversation" aria-label="New conversation">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+        </button>
+        <button type="button" class="icon-btn" data-el="close" title="Close chat" aria-label="Close chat">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
       </div>
     </header>
-    <div class="messages" data-el="messages" aria-live="polite"></div>
+    <div class="messages-wrap">
+      <div class="messages" data-el="messages" aria-live="polite"></div>
+      <button type="button" class="scroll-bottom-btn" data-el="scroll-bottom" aria-label="Jump to latest message">&darr; Latest</button>
+    </div>
     <form class="composer" data-el="form">
-      <input type="text" class="input" data-el="input" placeholder="Type your question..." maxlength="2000" autocomplete="off" />
-      <button type="submit" class="send-btn" data-el="send">Send</button>
+      <textarea class="input" data-el="input" rows="1" placeholder="Type your question..." maxlength="2000" aria-label="Type your message"></textarea>
+      <button type="submit" class="send-btn" data-el="send" aria-label="Send message" title="Send message" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m5 12 7-7 7 7" />
+          <path d="M12 19V5" />
+        </svg>
+      </button>
     </form>
     <div class="powered">[ TAMYIZ™ INSTANT SUPPORT ]</div>
   </section>
@@ -596,6 +861,19 @@ template.innerHTML = `
     </svg>
   </button>
 `;
+
+const timeFormatter = new Intl.DateTimeFormat(undefined, {
+  hour: 'numeric',
+  minute: '2-digit'
+});
+
+function formatTimestamp(date = new Date()) {
+  try {
+    return timeFormatter.format(date);
+  } catch {
+    return '';
+  }
+}
 
 /**
  * Append plain text with inline markdown links, bare URLs, **bold**, *italic*, and `code` safely.
@@ -738,6 +1016,7 @@ class KhalaSupportWidget extends HTMLElement {
     this.shadowRoot.append(template.content.cloneNode(true));
 
     this._els = {
+      backdrop: this.shadowRoot.querySelector('[data-el="backdrop"]'),
       panel: this.shadowRoot.querySelector('.panel'),
       launcher: this.shadowRoot.querySelector('[data-el="launcher"]'),
       close: this.shadowRoot.querySelector('[data-el="close"]'),
@@ -745,6 +1024,7 @@ class KhalaSupportWidget extends HTMLElement {
       agentName: this.shadowRoot.querySelector('[data-el="agent-name"]'),
       tagline: this.shadowRoot.querySelector('[data-el="tagline"]'),
       messages: this.shadowRoot.querySelector('[data-el="messages"]'),
+      scrollBottom: this.shadowRoot.querySelector('[data-el="scroll-bottom"]'),
       form: this.shadowRoot.querySelector('[data-el="form"]'),
       input: this.shadowRoot.querySelector('[data-el="input"]'),
       send: this.shadowRoot.querySelector('[data-el="send"]')
@@ -757,11 +1037,16 @@ class KhalaSupportWidget extends HTMLElement {
     this._scrollQueued = false;
     this._suggestionsEl = null;
     this._listenersBound = false;
+    this._wasNearBottom = true;
+
     this._onDocPointerDown = (e) => {
       if (this._isOpen && !e.composedPath().includes(this)) {
         this.close();
       }
     };
+
+    this._onViewportChange = () => this._updateViewportMetrics();
+    this._onOnlineChange = () => this._syncOnlineStatus();
   }
 
   connectedCallback() {
@@ -769,11 +1054,47 @@ class KhalaSupportWidget extends HTMLElement {
       this._listenersBound = true;
       this._els.launcher.addEventListener('click', () => this.toggle());
       this._els.close.addEventListener('click', () => this.close());
+      this._els.backdrop.addEventListener('click', () => this.close());
       this._els.reset.addEventListener('click', () => this.resetConversation());
+      this._els.scrollBottom.addEventListener('click', () => {
+        this._scrollToBottom(true);
+        this._els.scrollBottom.classList.remove('is-visible');
+      });
+
+      this._els.messages.addEventListener('scroll', () => {
+        this._wasNearBottom = this._isNearBottom();
+        if (this._wasNearBottom) {
+          this._els.scrollBottom.classList.remove('is-visible');
+        }
+      }, { passive: true });
+
+      this._els.input.addEventListener('input', () => {
+        this._autoResizeInput();
+        this._syncSendState();
+      });
+
+      this._els.input.addEventListener('focus', () => {
+        this._updateViewportMetrics();
+        if (this._wasNearBottom) {
+          this._scrollToBottom();
+        }
+      });
+
+      this._els.input.addEventListener('keydown', (e) => {
+        if (e.isComposing || e.keyCode === 229) return;
+        if (e.key === 'Enter' && !e.shiftKey && !this._isCoarsePointer()) {
+          e.preventDefault();
+          if (!this._busy && this._els.input.value.trim()) {
+            this.sendMessage(this._els.input.value);
+          }
+        }
+      });
+
       this._els.form.addEventListener('submit', (e) => {
         e.preventDefault();
         this.sendMessage(this._els.input.value);
       });
+
       this.shadowRoot.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && this._isOpen) {
           this.close();
@@ -782,11 +1103,27 @@ class KhalaSupportWidget extends HTMLElement {
     }
 
     document.addEventListener('pointerdown', this._onDocPointerDown);
+    window.addEventListener('online', this._onOnlineChange);
+    window.addEventListener('offline', this._onOnlineChange);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', this._onViewportChange);
+      window.visualViewport.addEventListener('scroll', this._onViewportChange);
+    }
+
+    this._updateViewportMetrics();
+    this._syncOnlineStatus();
+    this._syncSendState();
     this.loadClientConfig();
   }
 
   disconnectedCallback() {
     document.removeEventListener('pointerdown', this._onDocPointerDown);
+    window.removeEventListener('online', this._onOnlineChange);
+    window.removeEventListener('offline', this._onOnlineChange);
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', this._onViewportChange);
+      window.visualViewport.removeEventListener('scroll', this._onViewportChange);
+    }
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -807,8 +1144,50 @@ class KhalaSupportWidget extends HTMLElement {
     return Boolean(window.matchMedia?.('(pointer: coarse)').matches);
   }
 
+  _isNearBottom() {
+    const el = this._els.messages;
+    return el.scrollHeight - el.scrollTop - el.clientHeight <= 72;
+  }
+
+  _autoResizeInput() {
+    const el = this._els.input;
+    el.style.height = 'auto';
+    const next = Math.min(el.scrollHeight, 104);
+    if (next > 0) {
+      el.style.height = `${next}px`;
+    }
+    el.style.overflowY = el.scrollHeight > 104 ? 'auto' : 'hidden';
+  }
+
+  _syncSendState() {
+    this._els.send.disabled = this._busy || !this._els.input.value.trim();
+  }
+
+  _syncOnlineStatus() {
+    const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+    if (offline) {
+      this.setAttribute('data-offline', 'true');
+      this._els.tagline.textContent = 'Offline — check connection';
+    } else {
+      this.removeAttribute('data-offline');
+      this._els.tagline.textContent = this._config?.tagline || 'Online';
+    }
+  }
+
+  _updateViewportMetrics() {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const kbOffset = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+    this.style.setProperty('--_vv-height', `${Math.round(vv.height)}px`);
+    this.style.setProperty('--_kb-offset', `${kbOffset}px`);
+    if (this._isOpen && this._wasNearBottom) {
+      this._scrollToBottom();
+    }
+  }
+
   open() {
     this._isOpen = true;
+    this._updateViewportMetrics();
     this.setAttribute('data-open', 'true');
     this._els.panel.classList.add('is-open');
     this._els.panel.setAttribute('aria-hidden', 'false');
@@ -825,7 +1204,10 @@ class KhalaSupportWidget extends HTMLElement {
     this._els.panel.classList.remove('is-open');
     this._els.panel.setAttribute('aria-hidden', 'true');
     this._els.launcher.setAttribute('aria-expanded', 'false');
-    this._els.launcher.focus();
+    this._els.input.blur();
+    if (this.shadowRoot.activeElement && this.shadowRoot.activeElement !== this._els.launcher) {
+      this._els.launcher.focus();
+    }
   }
 
   toggle() {
@@ -846,7 +1228,7 @@ class KhalaSupportWidget extends HTMLElement {
         this.style.setProperty('--khala-accent', this._config.accentColor);
       }
       this._els.agentName.textContent = this._config.agentName || 'Support AI';
-      this._els.tagline.textContent = this._config.tagline || 'Online';
+      this._syncOnlineStatus();
       const label = `Chat with ${this._config.businessName || 'us'}`;
       this._els.launcher.setAttribute('aria-label', label);
       this._els.launcher.setAttribute('title', label);
@@ -854,6 +1236,7 @@ class KhalaSupportWidget extends HTMLElement {
       this.resetConversation();
     } catch {
       this._els.agentName.textContent = 'Support AI';
+      this._syncOnlineStatus();
       this.resetConversation('Hi! How can I help you today?');
     }
   }
@@ -861,18 +1244,27 @@ class KhalaSupportWidget extends HTMLElement {
   resetConversation(fallbackGreeting) {
     this._history = [];
     this._suggestionsEl = null;
+    this._wasNearBottom = true;
+    this._els.scrollBottom.classList.remove('is-visible');
     this._els.messages.replaceChildren();
     const greeting = this._config?.greeting || fallbackGreeting || 'Hi! How can I help you today?';
     this._appendMessage('bot', greeting);
     this._renderSuggestions(this._config?.suggestedQuestions || []);
   }
 
-  _scrollToBottom() {
+  _scrollToBottom(smooth = false) {
     if (this._scrollQueued) return;
     this._scrollQueued = true;
     requestAnimationFrame(() => {
       this._scrollQueued = false;
-      this._els.messages.scrollTop = this._els.messages.scrollHeight;
+      const el = this._els.messages;
+      if (smooth && typeof el.scrollTo === 'function') {
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      } else {
+        el.scrollTop = el.scrollHeight;
+      }
+      this._wasNearBottom = true;
+      this._els.scrollBottom.classList.remove('is-visible');
     });
   }
 
@@ -897,9 +1289,15 @@ class KhalaSupportWidget extends HTMLElement {
     this._els.messages.append(wrap);
   }
 
-  _appendMessage(role, text, animateBlocks = false) {
+  _appendMessage(role, text, options = {}) {
+    const { animateBlocks = false, isError = false, retryText = null, preserveScroll = true } = options;
+    const wasNearBottom = this._isNearBottom();
+
+    const row = document.createElement('div');
+    row.className = `msg-row ${role}`;
+
     const div = document.createElement('div');
-    div.className = `msg ${role}`;
+    div.className = `msg ${role}${isError ? ' is-error' : ''}`;
     if (role === 'bot') {
       renderFormattedText(div, text);
       if (animateBlocks) {
@@ -909,15 +1307,51 @@ class KhalaSupportWidget extends HTMLElement {
           el.style.setProperty('--line-idx', String(Math.min(idx, 8)));
         });
       }
+      if (isError && retryText) {
+        const retryBtn = document.createElement('button');
+        retryBtn.type = 'button';
+        retryBtn.className = 'retry-btn';
+        retryBtn.textContent = '\u21bb Retry';
+        retryBtn.addEventListener('click', () => {
+          row.remove();
+          this.sendMessage(retryText, { skipUserBubble: true });
+        });
+        div.append(retryBtn);
+      }
     } else {
       div.textContent = text;
     }
-    this._els.messages.append(div);
-    this._scrollToBottom();
-    return div;
+
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.textContent = formatTimestamp();
+
+    row.append(div, meta);
+    this._els.messages.append(row);
+
+    if (preserveScroll && !wasNearBottom && role === 'bot') {
+      this._els.scrollBottom.classList.add('is-visible');
+    } else if (role === 'bot' && animateBlocks) {
+      requestAnimationFrame(() => {
+        const msgBox = this._els.messages;
+        if (row.offsetHeight > msgBox.clientHeight * 0.75 && typeof row.scrollIntoView === 'function') {
+          row.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        } else {
+          this._scrollToBottom(true);
+        }
+      });
+    } else {
+      this._scrollToBottom();
+    }
+
+    return row;
   }
 
   _appendTypingIndicator() {
+    const wasNearBottom = this._isNearBottom();
+    const row = document.createElement('div');
+    row.className = 'msg-row bot';
+
     const div = document.createElement('div');
     div.className = 'msg bot typing';
     const dots = document.createElement('span');
@@ -929,24 +1363,50 @@ class KhalaSupportWidget extends HTMLElement {
     const label = document.createElement('span');
     label.textContent = 'Writing reply...';
     div.append(dots, label);
-    this._els.messages.append(div);
-    this._scrollToBottom();
-    return div;
+
+    row.append(div);
+    this._els.messages.append(row);
+    if (wasNearBottom) {
+      this._scrollToBottom();
+    }
+    return row;
   }
 
-  async sendMessage(rawText) {
+  async sendMessage(rawText, options = {}) {
     const text = (rawText || '').trim();
     if (!text || this._busy) return;
 
+    const { skipUserBubble = false } = options;
+
     this._busy = true;
-    this._els.send.disabled = true;
-    this._els.input.value = '';
+    if (!skipUserBubble) {
+      this._els.input.value = '';
+      this._autoResizeInput();
+    }
+    this._syncSendState();
+
     if (this._suggestionsEl) {
       this._suggestionsEl.remove();
       this._suggestionsEl = null;
     }
 
-    this._appendMessage('user', text);
+    if (!skipUserBubble) {
+      this._appendMessage('user', text, { preserveScroll: false });
+    }
+
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      this._syncOnlineStatus();
+      this._appendMessage('bot', 'You appear to be offline. Check your internet connection and tap Retry.', {
+        animateBlocks: true,
+        isError: true,
+        retryText: text,
+        preserveScroll: false
+      });
+      this._busy = false;
+      this._syncSendState();
+      return;
+    }
+
     const typingEl = this._appendTypingIndicator();
 
     try {
@@ -965,18 +1425,26 @@ class KhalaSupportWidget extends HTMLElement {
       typingEl.remove();
 
       if (!res.ok) {
-        this._appendMessage('bot', data.error || 'Sorry, something went wrong. Please try again.', true);
+        this._appendMessage('bot', data.error || 'Sorry, something went wrong. Please try again.', {
+          animateBlocks: true,
+          isError: true,
+          retryText: text
+        });
       } else {
         this._history.push({ role: 'user', text });
         this._history.push({ role: 'model', text: data.reply });
-        this._appendMessage('bot', data.reply, true);
+        this._appendMessage('bot', data.reply, { animateBlocks: true });
       }
     } catch {
       typingEl.remove();
-      this._appendMessage('bot', 'Unable to reach the support server right now.', true);
+      this._appendMessage('bot', 'Unable to reach the support server right now. Please check your connection and try again.', {
+        animateBlocks: true,
+        isError: true,
+        retryText: text
+      });
     } finally {
       this._busy = false;
-      this._els.send.disabled = false;
+      this._syncSendState();
       if (this._isOpen && !this._isCoarsePointer()) {
         this._els.input.focus();
       }

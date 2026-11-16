@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -88,4 +89,32 @@ test('HTTP API endpoints serve config and chat responses', async () => {
   } finally {
     server.close();
   }
+});
+
+test('widget.js includes mobile responsive, keyboard, multiline, scroll, and error/offline states', async () => {
+  const src = await fs.readFile(new URL('../public/widget.js', import.meta.url), 'utf8');
+
+  // Multiline textarea, IME composition guard, and Shift+Enter newline support
+  assert.match(src, /<textarea class="input" data-el="input"/);
+  assert.match(src, /e\.isComposing \|\| e\.keyCode === 229/);
+  assert.match(src, /e\.key === 'Enter' && !e\.shiftKey/);
+  assert.match(src, /_autoResizeInput\(\)/);
+
+  // Mobile keyboard adaptation via visualViewport
+  assert.match(src, /window\.visualViewport/);
+  assert.match(src, /--_vv-height/);
+  assert.match(src, /--_kb-offset/);
+
+  // Responsive breakpoints (320px, 360-430px, 768px, desktop) and overflow prevention
+  assert.match(src, /@media \(min-width: 640px\) and \(max-width: 768px\)/);
+  assert.match(src, /@media \(max-width: 639px\)/);
+  assert.match(src, /@media \(max-width: 359px\)/);
+  assert.match(src, /overflow-wrap: anywhere;/);
+
+  // Natural scrolling, retry error state, and online/offline listeners
+  assert.match(src, /scroll-bottom-btn/);
+  assert.match(src, /_isNearBottom\(\)/);
+  assert.match(src, /retry-btn/);
+  assert.match(src, /addEventListener\('online'/);
+  assert.match(src, /addEventListener\('offline'/);
 });
