@@ -25,12 +25,16 @@
     "workingHours": "24/7 AI support available anytime. Human support via email & WhatsApp responds as soon as possible.",
     "faqs": [
       {
+        "question": "How many books do you have?",
+        "answer": "TAMYIZ™ currently has 9 PDF e-books available on https://tamyiz.pages.dev:\n- **Four Minutes Fast** — ₹550\n- **The Girl Who Sold Dreams** — ₹499\n- **The Last Letter from the Sea** — ₹449\n- **The Built Mind** — ₹400\n- **The First 12 Weeks** — ₹349\n- **Start Selling Digital Products From Zero** — ₹699\n- **The AI Playbook** — ₹299\n- **Stay Safe Online** — ₹525\n- **Research, Write & Cite with AI** — ₹629"
+      },
+      {
         "question": "What is TAMYIZ™?",
         "answer": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform founded by Sahil Naseer and Basit Majeed, offering DRM-free PDF e-books on practical topics, security, AI, and literary fiction."
       },
       {
-        "question": "Are there any bundle discounts or coupons?",
-        "answer": "Yes! TAMYIZ™ gives automatic bundle discounts at checkout: 20% off when buying 2 books, and 25% off when buying 3 or more books (applied automatically before any promo coupon)."
+        "question": "Are there any bundle discounts?",
+        "answer": "Yes! TAMYIZ™ gives automatic bundle discounts at checkout: **20% off** when buying 2 books, and **25% off** when buying 3 or more books (applied automatically before any promo coupon)."
       },
       {
         "question": "How do I download my e-book after paying?",

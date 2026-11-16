@@ -137,6 +137,29 @@ export function buildSystemPrompt(client, catalog = []) {
     .join('\n');
 }
 
+function normalizeQuestion(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Return an instant FAQ answer when the user's message matches a configured FAQ question.
+ */
+export function matchExactFaq(client, userMessage) {
+  const target = normalizeQuestion(userMessage);
+  if (!target) return null;
+  const faqs = client?.knowledgeBase?.faqs || [];
+  for (const faq of faqs) {
+    if (normalizeQuestion(faq.question) === target) {
+      return faq.answer;
+    }
+  }
+  return null;
+}
+
 /**
  * Deterministic FAQ keyword matcher used when GEMINI_API_KEY is missing or temporarily unavailable.
  */

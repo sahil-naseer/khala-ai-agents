@@ -4,6 +4,7 @@ import {
   getPublicClientConfig,
   fetchLiveCatalog,
   buildSystemPrompt,
+  matchExactFaq,
   matchFaqFallback,
   buildGeminiContents
 } from './agent-core.js';
@@ -58,6 +59,13 @@ export async function generateEdgeReply({ client, message, history = [], env = {
       reply: matchFaqFallback(client, message),
       mode: 'demo'
     };
+  }
+
+  if (Array.isArray(history) && history.length === 0) {
+    const exactMatch = matchExactFaq(client, message);
+    if (exactMatch) {
+      return { reply: exactMatch, mode: 'instant' };
+    }
   }
 
   const primaryModel = env.GEMINI_MODEL || 'gemini-3.5-flash-lite';

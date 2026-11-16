@@ -5,6 +5,7 @@ import {
   listClients,
   getPublicClientConfig,
   buildSystemPrompt,
+  matchExactFaq,
   matchFaqFallback
 } from '../src/agent.js';
 import { createApp } from '../server.js';
@@ -36,6 +37,15 @@ test('buildSystemPrompt includes business name and FAQs', async () => {
   const prompt = buildSystemPrompt(tamyiz);
   assert.match(prompt, /TAMYIZ™/);
   assert.match(prompt, /Razorpay/i);
+});
+
+test('matchExactFaq matches every suggestedQuestion in tamyiz config', async () => {
+  const tamyiz = await loadClientConfig('tamyiz');
+  for (const q of tamyiz.suggestedQuestions) {
+    const answer = matchExactFaq(tamyiz, q);
+    assert.ok(answer && answer.length > 10, `Expected exact FAQ match for "${q}"`);
+  }
+  assert.equal(matchExactFaq(tamyiz, 'Something completely unrelated'), null);
 });
 
 test('matchFaqFallback matches relevant FAQ in demo mode', async () => {

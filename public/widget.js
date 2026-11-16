@@ -16,6 +16,7 @@ sheet.replaceSync(`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    pointer-events: none;
     font-family: var(--font-body, 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
     font-size: 14px;
     line-height: 1.5;
@@ -34,6 +35,8 @@ sheet.replaceSync(`
   }
 
   .launcher {
+    position: relative;
+    pointer-events: auto;
     width: 48px;
     height: 48px;
     padding: 0;
@@ -47,6 +50,31 @@ sheet.replaceSync(`
     cursor: pointer;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.25);
     transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, transform 0.26s var(--_ease), box-shadow 0.24s ease;
+  }
+
+  .launcher svg {
+    position: absolute;
+    transition: opacity 0.22s ease, transform 0.26s var(--_ease);
+  }
+
+  .launcher .icon-bot {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  .launcher .icon-close {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+
+  :host([data-open="true"]) .launcher .icon-bot {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+
+  :host([data-open="true"]) .launcher .icon-close {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
   }
 
   .launcher:hover {
@@ -75,22 +103,22 @@ sheet.replaceSync(`
   }
 
   .panel {
-    width: min(384px, calc(100vw - 28px));
-    height: min(556px, calc(100dvh - 96px));
+    width: min(376px, calc(100vw - 28px));
+    height: min(520px, calc(100dvh - 96px));
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
     background: var(--_paper);
     border: 1px solid #0B0B0B;
-    border-radius: 26px;
+    border-radius: 24px;
     overflow: hidden;
     visibility: hidden;
     opacity: 0;
-    transform: translateY(16px) scale(0.92);
+    transform: translateY(14px) scale(0.94);
     transform-origin: bottom right;
     pointer-events: none;
     box-shadow: none;
-    transition: opacity 0.34s var(--_ease), transform 0.34s var(--_ease), visibility 0.34s;
+    transition: opacity 0.28s var(--_ease), transform 0.28s var(--_ease), visibility 0.28s;
   }
 
   .panel.is-open {
@@ -106,7 +134,7 @@ sheet.replaceSync(`
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 16px 20px;
+    padding: 15px 18px;
     background: #0B0B0B;
     color: #FFFFFF;
     border-bottom: 1px solid #0B0B0B;
@@ -188,7 +216,7 @@ sheet.replaceSync(`
     flex: 1;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 16px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -200,11 +228,22 @@ sheet.replaceSync(`
   @keyframes khala-msg-in {
     from {
       opacity: 0;
-      transform: translateY(10px) scale(0.98);
+      transform: translateY(8px) scale(0.985);
     }
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes khala-line-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
@@ -220,13 +259,13 @@ sheet.replaceSync(`
   }
 
   .msg {
-    max-width: 86%;
-    padding: 12px 16px;
+    max-width: 88%;
+    padding: 11px 15px;
     border-radius: 20px;
     font-size: 13.5px;
     line-height: 1.55;
     word-break: break-word;
-    animation: khala-msg-in 0.32s var(--_ease) both;
+    animation: khala-msg-in 0.28s var(--_ease) both;
   }
 
   .msg.bot {
@@ -245,12 +284,29 @@ sheet.replaceSync(`
     border-bottom-right-radius: 6px;
   }
 
+  .msg.bot.is-revealing p,
+  .msg.bot.is-revealing li,
+  .msg.bot.is-revealing h3,
+  .msg.bot.is-revealing h4 {
+    animation: khala-line-in 0.28s var(--_ease) both;
+    animation-delay: calc(var(--line-idx, 0) * 45ms);
+  }
+
   .msg p {
     margin: 0 0 8px;
   }
 
   .msg p:last-child {
     margin-bottom: 0;
+  }
+
+  .msg h3,
+  .msg h4 {
+    margin: 2px 0 6px;
+    font-family: var(--font-sub, 'Space Grotesk', system-ui, sans-serif);
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
   }
 
   .msg ul,
@@ -266,6 +322,14 @@ sheet.replaceSync(`
 
   .msg li + li {
     margin-top: 4px;
+  }
+
+  .msg code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.9em;
+    background: rgba(0, 0, 0, 0.06);
+    padding: 1px 5px;
+    border-radius: 6px;
   }
 
   .msg a {
@@ -319,14 +383,9 @@ sheet.replaceSync(`
   .suggestions {
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
-    padding: 10px 16px;
-    background: var(--_paper);
-    border-top: 1px solid var(--_border);
-  }
-
-  .suggestions[hidden] {
-    display: none;
+    gap: 6px;
+    margin-top: 2px;
+    animation: khala-msg-in 0.3s var(--_ease) 0.08s both;
   }
 
   .chip {
@@ -334,7 +393,7 @@ sheet.replaceSync(`
     background: var(--_bg);
     color: var(--_fg);
     border-radius: 999px;
-    padding: 7px 14px;
+    padding: 7px 13px;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
@@ -363,7 +422,7 @@ sheet.replaceSync(`
     min-width: 0;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 999px;
-    padding: 10px 16px;
+    padding: 9px 15px;
     background: var(--_paper);
     color: var(--_fg);
     transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -378,7 +437,7 @@ sheet.replaceSync(`
   .send-btn {
     border: 1px solid #0B0B0B;
     border-radius: 999px;
-    padding: 10px 18px;
+    padding: 9px 17px;
     background: #0B0B0B;
     color: #FFFFFF;
     font-weight: 600;
@@ -427,66 +486,63 @@ sheet.replaceSync(`
       bottom: max(12px, env(safe-area-inset-bottom));
     }
     .panel {
-      width: min(310px, calc(100vw - 28px));
-      height: min(390px, calc(100dvh - 110px));
+      width: min(328px, calc(100vw - 24px));
+      height: min(420px, calc(100dvh - 96px));
       margin-bottom: 8px;
-      border-radius: 20px;
+      border-radius: 22px;
     }
     .header {
-      padding: 11px 14px;
+      padding: 12px 15px;
     }
     .kicker {
       font-size: 9px;
     }
     .agent-name {
-      font-size: 13.5px;
+      font-size: 14px;
     }
     .tagline {
       font-size: 9.5px;
     }
     .icon-btn {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
     }
     .messages {
-      padding: 11px;
+      padding: 12px;
       gap: 8px;
     }
     .msg {
-      padding: 9px 12px;
-      font-size: 12.5px;
-      border-radius: 16px;
-    }
-    .suggestions {
-      padding: 7px 11px;
-      gap: 5px;
+      padding: 9px 13px;
+      font-size: 13px;
+      border-radius: 17px;
     }
     .chip {
-      padding: 5px 10px;
-      font-size: 11.5px;
+      padding: 6px 12px;
+      font-size: 12px;
     }
     .composer {
       padding: 8px 10px;
       gap: 6px;
     }
     .input {
-      padding: 7px 12px;
-      min-height: 36px;
+      padding: 8px 13px;
+      min-height: 38px;
     }
     .send-btn {
-      padding: 0 13px;
-      min-height: 36px;
-      font-size: 12.5px;
+      padding: 0 14px;
+      min-height: 38px;
+      font-size: 13px;
     }
     .powered {
       font-size: 9px;
-      padding: 2px 8px 6px;
+      padding: 2px 8px 7px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .panel,
     .launcher,
+    .launcher svg,
     .icon-btn,
     .chip,
     .input,
@@ -494,6 +550,11 @@ sheet.replaceSync(`
       transition: none;
     }
     .msg,
+    .msg.bot.is-revealing p,
+    .msg.bot.is-revealing li,
+    .msg.bot.is-revealing h3,
+    .msg.bot.is-revealing h4,
+    .suggestions,
     .typing-dots span {
       animation: none;
     }
@@ -515,7 +576,6 @@ template.innerHTML = `
       </div>
     </header>
     <div class="messages" data-el="messages" aria-live="polite"></div>
-    <div class="suggestions" data-el="suggestions" hidden></div>
     <form class="composer" data-el="form">
       <input type="text" class="input" data-el="input" placeholder="Type your question..." maxlength="2000" autocomplete="off" />
       <button type="submit" class="send-btn" data-el="send">Send</button>
@@ -523,7 +583,7 @@ template.innerHTML = `
     <div class="powered">[ TAMYIZ™ INSTANT SUPPORT ]</div>
   </section>
   <button type="button" class="launcher" data-el="launcher" aria-expanded="false" aria-label="Chat with AI Support" title="Chat with AI Support">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg class="icon-bot" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M12 8V4H8" />
       <rect width="16" height="12" x="4" y="8" rx="2" />
       <path d="M2 14h2" />
@@ -531,14 +591,17 @@ template.innerHTML = `
       <path d="M15 13v2" />
       <path d="M9 13v2" />
     </svg>
+    <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
   </button>
 `;
 
 /**
- * Append plain text with inline **bold** segments and clickable https:// URLs using safe DOM nodes.
+ * Append plain text with inline markdown links, bare URLs, **bold**, *italic*, and `code` safely.
  */
 function appendInlineFormatted(parent, text) {
-  const tokenRe = /(\*\*[^*]+\*\*|https?:\/\/[^\s)]+)/g;
+  const tokenRe = /(\[[^\]]+\]\(https?:\/\/[^)\s]+\)|\*\*[^*]+\*\*|\*[^*\n]+\*|`[^`\n]+`|https?:\/\/[^\s)]+)/g;
   let lastIndex = 0;
   let match;
 
@@ -548,10 +611,30 @@ function appendInlineFormatted(parent, text) {
     }
 
     const token = match[0];
-    if (token.startsWith('**') && token.endsWith('**')) {
+    if (token.startsWith('[')) {
+      const mdLink = token.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+      if (mdLink) {
+        const link = document.createElement('a');
+        link.href = mdLink[2];
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = mdLink[1];
+        parent.append(link);
+      } else {
+        parent.append(document.createTextNode(token));
+      }
+    } else if (token.startsWith('**') && token.endsWith('**')) {
       const strong = document.createElement('strong');
       strong.textContent = token.slice(2, -2);
       parent.append(strong);
+    } else if (token.startsWith('*') && token.endsWith('*')) {
+      const em = document.createElement('em');
+      em.textContent = token.slice(1, -1);
+      parent.append(em);
+    } else if (token.startsWith('`') && token.endsWith('`')) {
+      const code = document.createElement('code');
+      code.textContent = token.slice(1, -1);
+      parent.append(code);
     } else {
       let url = token;
       let trailing = '';
@@ -577,7 +660,7 @@ function appendInlineFormatted(parent, text) {
 }
 
 /**
- * Safely render paragraphs, bullet lists, bold spans, and URLs without innerHTML.
+ * Safely render headings, paragraphs, bullet/numbered lists, bold/italic/code, and links without innerHTML.
  */
 function renderFormattedText(container, text) {
   container.replaceChildren();
@@ -612,10 +695,17 @@ function renderFormattedText(container, text) {
       continue;
     }
 
+    const headingMatch = line.match(/^#{1,4}\s+(.+)$/);
     const bulletMatch = line.match(/^(?:[-*•])\s+(.+)$/);
     const orderedMatch = line.match(/^\d+\.\s+(.+)$/);
 
-    if (bulletMatch || orderedMatch) {
+    if (headingMatch) {
+      flushParagraph();
+      flushList();
+      const h = document.createElement('h3');
+      appendInlineFormatted(h, headingMatch[1]);
+      container.append(h);
+    } else if (bulletMatch || orderedMatch) {
       flushParagraph();
       const targetTag = orderedMatch ? 'ol' : 'ul';
       if (!currentList || listTag !== targetTag) {
@@ -655,7 +745,6 @@ class KhalaSupportWidget extends HTMLElement {
       agentName: this.shadowRoot.querySelector('[data-el="agent-name"]'),
       tagline: this.shadowRoot.querySelector('[data-el="tagline"]'),
       messages: this.shadowRoot.querySelector('[data-el="messages"]'),
-      suggestions: this.shadowRoot.querySelector('[data-el="suggestions"]'),
       form: this.shadowRoot.querySelector('[data-el="form"]'),
       input: this.shadowRoot.querySelector('[data-el="input"]'),
       send: this.shadowRoot.querySelector('[data-el="send"]')
@@ -666,24 +755,38 @@ class KhalaSupportWidget extends HTMLElement {
     this._busy = false;
     this._isOpen = false;
     this._scrollQueued = false;
-    this._streamToken = 0;
+    this._suggestionsEl = null;
+    this._listenersBound = false;
+    this._onDocPointerDown = (e) => {
+      if (this._isOpen && !e.composedPath().includes(this)) {
+        this.close();
+      }
+    };
   }
 
   connectedCallback() {
-    this._els.launcher.addEventListener('click', () => this.toggle());
-    this._els.close.addEventListener('click', () => this.close());
-    this._els.reset.addEventListener('click', () => this.resetConversation());
-    this._els.form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.sendMessage(this._els.input.value);
-    });
-    this.shadowRoot.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this._isOpen) {
-        this.close();
-      }
-    });
+    if (!this._listenersBound) {
+      this._listenersBound = true;
+      this._els.launcher.addEventListener('click', () => this.toggle());
+      this._els.close.addEventListener('click', () => this.close());
+      this._els.reset.addEventListener('click', () => this.resetConversation());
+      this._els.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.sendMessage(this._els.input.value);
+      });
+      this.shadowRoot.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this._isOpen) {
+          this.close();
+        }
+      });
+    }
 
+    document.addEventListener('pointerdown', this._onDocPointerDown);
     this.loadClientConfig();
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('pointerdown', this._onDocPointerDown);
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -706,6 +809,7 @@ class KhalaSupportWidget extends HTMLElement {
 
   open() {
     this._isOpen = true;
+    this.setAttribute('data-open', 'true');
     this._els.panel.classList.add('is-open');
     this._els.panel.setAttribute('aria-hidden', 'false');
     this._els.launcher.setAttribute('aria-expanded', 'true');
@@ -717,6 +821,7 @@ class KhalaSupportWidget extends HTMLElement {
 
   close() {
     this._isOpen = false;
+    this.removeAttribute('data-open');
     this._els.panel.classList.remove('is-open');
     this._els.panel.setAttribute('aria-hidden', 'true');
     this._els.launcher.setAttribute('aria-expanded', 'false');
@@ -754,8 +859,8 @@ class KhalaSupportWidget extends HTMLElement {
   }
 
   resetConversation(fallbackGreeting) {
-    this._streamToken += 1;
     this._history = [];
+    this._suggestionsEl = null;
     this._els.messages.replaceChildren();
     const greeting = this._config?.greeting || fallbackGreeting || 'Hi! How can I help you today?';
     this._appendMessage('bot', greeting);
@@ -772,27 +877,38 @@ class KhalaSupportWidget extends HTMLElement {
   }
 
   _renderSuggestions(questions) {
-    this._els.suggestions.replaceChildren();
-    if (!Array.isArray(questions) || questions.length === 0) {
-      this._els.suggestions.hidden = true;
-      return;
+    if (this._suggestionsEl) {
+      this._suggestionsEl.remove();
+      this._suggestionsEl = null;
     }
-    this._els.suggestions.hidden = false;
+    if (!Array.isArray(questions) || questions.length === 0) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'suggestions';
     for (const q of questions) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'chip';
       btn.textContent = q;
       btn.addEventListener('click', () => this.sendMessage(q));
-      this._els.suggestions.append(btn);
+      wrap.append(btn);
     }
+    this._suggestionsEl = wrap;
+    this._els.messages.append(wrap);
   }
 
-  _appendMessage(role, text) {
+  _appendMessage(role, text, animateBlocks = false) {
     const div = document.createElement('div');
     div.className = `msg ${role}`;
     if (role === 'bot') {
       renderFormattedText(div, text);
+      if (animateBlocks) {
+        div.classList.add('is-revealing');
+        const blocks = div.querySelectorAll('p, li, h3, h4');
+        blocks.forEach((el, idx) => {
+          el.style.setProperty('--line-idx', String(Math.min(idx, 8)));
+        });
+      }
     } else {
       div.textContent = text;
     }
@@ -818,79 +934,6 @@ class KhalaSupportWidget extends HTMLElement {
     return div;
   }
 
-  _streamBotMessage(fullText) {
-    const text = String(fullText || '');
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (reducedMotion || text.length < 24) {
-      return Promise.resolve(this._appendMessage('bot', text));
-    }
-
-    const token = ++this._streamToken;
-    const div = document.createElement('div');
-    div.className = 'msg bot';
-    renderFormattedText(div, text);
-
-    const textEntries = [];
-    let totalChars = 0;
-    const walker = document.createTreeWalker(div, NodeFilter.SHOW_TEXT);
-    let node;
-    while ((node = walker.nextNode())) {
-      const full = node.nodeValue || '';
-      if (full.length > 0) {
-        textEntries.push({ node, full });
-        totalChars += full.length;
-        node.nodeValue = '';
-      }
-    }
-
-    this._els.messages.append(div);
-    if (totalChars === 0) {
-      this._scrollToBottom();
-      return Promise.resolve(div);
-    }
-
-    const totalFrames = 28;
-    let frame = 0;
-
-    return new Promise((resolve) => {
-      const step = () => {
-        if (token !== this._streamToken || !div.isConnected) {
-          resolve(div);
-          return;
-        }
-
-        frame += 1;
-        const t = Math.min(1, frame / totalFrames);
-        const eased = 1 - Math.pow(1 - t, 2.2);
-        let remaining = t >= 1 ? totalChars : Math.ceil(totalChars * eased);
-
-        for (const entry of textEntries) {
-          if (remaining <= 0) {
-            entry.node.nodeValue = '';
-          } else if (remaining >= entry.full.length) {
-            entry.node.nodeValue = entry.full;
-            remaining -= entry.full.length;
-          } else {
-            entry.node.nodeValue = entry.full.slice(0, remaining);
-            remaining = 0;
-          }
-        }
-
-        if (frame % 7 === 0 || t >= 1) {
-          this._scrollToBottom();
-        }
-
-        if (t >= 1) {
-          resolve(div);
-          return;
-        }
-        requestAnimationFrame(step);
-      };
-
-      requestAnimationFrame(step);
-    });
-  }
-
   async sendMessage(rawText) {
     const text = (rawText || '').trim();
     if (!text || this._busy) return;
@@ -898,7 +941,10 @@ class KhalaSupportWidget extends HTMLElement {
     this._busy = true;
     this._els.send.disabled = true;
     this._els.input.value = '';
-    this._els.suggestions.hidden = true;
+    if (this._suggestionsEl) {
+      this._suggestionsEl.remove();
+      this._suggestionsEl = null;
+    }
 
     this._appendMessage('user', text);
     const typingEl = this._appendTypingIndicator();
@@ -919,15 +965,15 @@ class KhalaSupportWidget extends HTMLElement {
       typingEl.remove();
 
       if (!res.ok) {
-        this._appendMessage('bot', data.error || 'Sorry, something went wrong. Please try again.');
+        this._appendMessage('bot', data.error || 'Sorry, something went wrong. Please try again.', true);
       } else {
         this._history.push({ role: 'user', text });
         this._history.push({ role: 'model', text: data.reply });
-        await this._streamBotMessage(data.reply);
+        this._appendMessage('bot', data.reply, true);
       }
     } catch {
       typingEl.remove();
-      this._appendMessage('bot', 'Unable to reach the support server right now.');
+      this._appendMessage('bot', 'Unable to reach the support server right now.', true);
     } finally {
       this._busy = false;
       this._els.send.disabled = false;

@@ -6,11 +6,12 @@ import {
   getPublicClientConfig,
   fetchLiveCatalog,
   buildSystemPrompt,
+  matchExactFaq,
   matchFaqFallback,
   buildGeminiContents
 } from './agent-core.js';
 
-export { getPublicClientConfig, fetchLiveCatalog, buildSystemPrompt, matchFaqFallback };
+export { getPublicClientConfig, fetchLiveCatalog, buildSystemPrompt, matchExactFaq, matchFaqFallback };
 
 const DEFAULT_CLIENTS_DIR = path.resolve(process.cwd(), 'clients');
 const CLIENT_ID_PATTERN = /^[a-z0-9-]+$/;
@@ -87,6 +88,13 @@ export async function generateAgentReply({ client, message, history = [] }) {
       reply: matchFaqFallback(client, message),
       mode: 'demo'
     };
+  }
+
+  if (Array.isArray(history) && history.length === 0) {
+    const exactMatch = matchExactFaq(client, message);
+    if (exactMatch) {
+      return { reply: exactMatch, mode: 'instant' };
+    }
   }
 
   const ai = new GoogleGenAI({ apiKey });
