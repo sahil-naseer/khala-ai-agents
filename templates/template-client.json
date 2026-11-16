@@ -1,0 +1,37 @@
+{
+  "id": "template-client",
+  "businessName": "Acme Store",
+  "agentName": "Acme Assistant",
+  "tagline": "24/7 Customer Support",
+  "accentColor": "#059669",
+  "greeting": "Hello! Welcome to Acme Store. Ask me anything about orders, shipping, or products.",
+  "placeholder": "Type your question...",
+  "suggestedQuestions": [
+    "What is your return policy?",
+    "How long does shipping take?",
+    "How do I track my order?"
+  ],
+  "tone": "Warm, clear, and concise. Never invent policies or prices not in the knowledge base.",
+  "escalation": {
+    "email": "hello@acmestore.example",
+    "note": "For order-specific lookups, ask for their order number and email hello@acmestore.example."
+  },
+  "knowledgeBase": {
+    "overview": "Acme Store is an online retail brand. This is a sample template for onboarding new paying clients.",
+    "workingHours": "Monday to Friday, 9:00 AM – 5:00 PM.",
+    "faqs": [
+      {
+        "question": "What is your return policy?",
+        "answer": "We offer a 30-day hassle-free return policy on unused items in original packaging."
+      },
+      {
+        "question": "How long does shipping take?",
+        "answer": "Standard shipping takes 3–5 business days. Express 1–2 day shipping is available at checkout."
+      },
+      {
+        "question": "How do I track my order?",
+        "answer": "Once your order ships, you will receive a tracking link via email."
+      }
+    ]
+  }
+}

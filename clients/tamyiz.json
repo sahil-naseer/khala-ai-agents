@@ -1,0 +1,57 @@
+{
+  "id": "tamyiz",
+  "businessName": "TAMYIZ™",
+  "siteUrl": "https://tamyiz.pages.dev",
+  "catalogUrl": "https://tamyiz.pages.dev/api/products",
+  "agentName": "TAMYIZ™ Support",
+  "tagline": "Practical e-books by Sahil & Basit",
+  "accentColor": "#0f172a",
+  "greeting": "Assalamu Alaikum / Hi! Welcome to TAMYIZ™. Ask me about our PDF e-books, bundle discounts, free Chapter 1 sample, Razorpay checkout, or download recovery.",
+  "placeholder": "Ask about TAMYIZ™ e-books, discounts, or support...",
+  "suggestedQuestions": [
+    "How many books do you have?",
+    "Are there any bundle discounts?",
+    "How do I download my e-book after paying?",
+    "How do I recover a lost download link?"
+  ],
+  "tone": "Clear, concise, polite, and accurate. Answer in the same language the customer uses. Never invent book titles, prices, or policies not in the knowledge base.",
+  "escalation": {
+    "email": "tamyiz.co@gmail.com",
+    "whatsapp": "+91 95417 22379 (https://wa.me/919541722379)",
+    "note": "If you cannot answer with certainty, or if a buyer has hit the 10-download limit or needs order help, direct them to email tamyiz.co@gmail.com or message WhatsApp +91 95417 22379 with their Razorpay payment ID."
+  },
+  "knowledgeBase": {
+    "overview": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform and online shop for DRM-free PDF e-books—including both practical non-fiction/tech guides and literary fiction novellas—co-founded by Sahil Naseer (AI/ML & Build) and Basit Majeed (Security & Research), based in Sopore, Kashmir, India.",
+    "workingHours": "24/7 AI support available anytime. Human support via email & WhatsApp responds as soon as possible.",
+    "faqs": [
+      {
+        "question": "What is TAMYIZ™?",
+        "answer": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform founded by Sahil Naseer and Basit Majeed, offering DRM-free PDF e-books on practical topics, security, AI, and literary fiction."
+      },
+      {
+        "question": "Are there any bundle discounts or coupons?",
+        "answer": "Yes! TAMYIZ™ gives automatic bundle discounts at checkout: 20% off when buying 2 books, and 25% off when buying 3 or more books (applied automatically before any promo coupon)."
+      },
+      {
+        "question": "How do I download my e-book after paying?",
+        "answer": "TAMYIZ™ e-books are DRM-free PDFs sold securely via Razorpay. Right after payment, your private signed download link appears immediately on screen AND is emailed to you via receipt (valid for 1 year, up to 10 downloads per link)."
+      },
+      {
+        "question": "How do I recover a lost download link?",
+        "answer": "If you lost your file, go to https://tamyiz.pages.dev/downloads and enter your order email or 10-digit phone number to have your download links re-sent to your order email. If you reached the 10-download limit, message us on WhatsApp at +91 95417 22379 or email tamyiz.co@gmail.com with your Razorpay payment ID."
+      },
+      {
+        "question": "Can I read a free sample first?",
+        "answer": "Yes! TAMYIZ™ offers a free Chapter 1 sample reader on https://tamyiz.pages.dev so you can preview the writing before purchasing."
+      },
+      {
+        "question": "How do pre-orders and gift orders work?",
+        "answer": "Editions marked 'Coming Soon' can be pre-ordered on WhatsApp (+91 95417 22379). Gift orders and promo coupons are also supported at checkout."
+      },
+      {
+        "question": "How do I contact TAMYIZ™ support?",
+        "answer": "You can email tamyiz.co@gmail.com or message TAMYIZ™ support on WhatsApp at +91 95417 22379."
+      }
+    ]
+  }
+}

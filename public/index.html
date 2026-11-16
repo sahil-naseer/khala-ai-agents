@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Khala AI Agents — Tamyiz Demo &amp; Client Embed</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --fg: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .badge.demo {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    h1 {
+      margin: 12px 0 8px;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+    p.lead {
+      color: var(--muted);
+      margin-top: 0;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    select, button {
+      font: inherit;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    pre {
+      margin: 12px 0 0;
+      padding: 14px;
+      border-radius: 10px;
+      background: #0f172a;
+      color: #e2e8f0;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    ol {
+      padding-left: 20px;
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    li + li { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <span id="mode-badge" class="badge">Checking server...</span>
+    <h1>Tamyiz AI Customer Support Agent</h1>
+    <p class="lead">
+      Test your embeddable 24/7 AI support chatbot in the bottom-right corner, or switch clients to preview how you can resell this agent to customers.
+    </p>
+
+    <section class="card">
+      <h2>1. Preview Client Agent</h2>
+      <div class="row">
+        <label for="client-select"><strong>Active Client:</strong></label>
+        <select id="client-select"></select>
+        <button type="button" id="open-chat-btn" class="primary">Open Chat Widget</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Embed on Tamyiz (or Any Client Website)</h2>
+      <p style="margin:0;color:var(--muted)">Paste this single line before <code>&lt;/body&gt;</code> on any website:</p>
+      <pre><code id="embed-code"></code></pre>
+      <div class="row" style="margin-top:12px;">
+        <button type="button" id="copy-btn">Copy Embed Code</button>
+        <span id="copy-status" style="font-size:13px;color:var(--muted)"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. How to Add a New Paying Customer</h2>
+      <ol>
+        <li>Duplicate <code>templates/template-client.json</code> to <code>clients/customer-name.json</code>.</li>
+        <li>Update their <code>businessName</code>, <code>accentColor</code>, <code>greeting</code>, and <code>knowledgeBase.faqs</code>.</li>
+        <li>Set <code>GEMINI_API_KEY</code> in <code>.env</code> for full Gemini-powered answers.</li>
+        <li>Send them the 1-line <code>&lt;script&gt;</code> tag with <code>data-client="customer-name"</code>.</li>
+      </ol>
+    </section>
+  </main>
+
+  <khala-support-widget id="demo-widget" client="tamyiz"></khala-support-widget>
+  <script src="/widget.js" data-manual></script>
+  <script>
+    const badge = document.getElementById('mode-badge');
+    const select = document.getElementById('client-select');
+    const embedCode = document.getElementById('embed-code');
+    const widget = document.getElementById('demo-widget');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyStatus = document.getElementById('copy-status');
+    const openChatBtn = document.getElementById('open-chat-btn');
+
+    function updateEmbedSnippet(clientId) {
+      const origin = window.location.origin;
+      embedCode.textContent = `<script src="${origin}/widget.js" data-client="${clientId}" defer><\/script>`;
+    }
+
+    async function init() {
+      const [healthRes, clientsRes] = await Promise.all([
+        fetch('/api/health'),
+        fetch('/api/clients')
+      ]);
+
+      if (healthRes.ok) {
+        const health = await healthRes.json();
+        if (health.mode === 'gemini') {
+          badge.textContent = 'Live Mode: Gemini AI Active';
+          badge.classList.remove('demo');
+        } else {
+          badge.textContent = 'Demo Mode: FAQ Matcher (Add GEMINI_API_KEY in .env for live AI)';
+          badge.classList.add('demo');
+        }
+      }
+
+      if (clientsRes.ok) {
+        const { clients } = await clientsRes.json();
+        for (const c of clients) {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = `${c.businessName} (${c.id})`;
+          select.append(opt);
+        }
+        select.value = 'tamyiz';
+        updateEmbedSnippet(select.value);
+      }
+    }
+
+    select.addEventListener('change', () => {
+      widget.setAttribute('client', select.value);
+      updateEmbedSnippet(select.value);
+    });
+
+    openChatBtn.addEventListener('click', () => {
+      widget.open();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(embedCode.textContent);
+        copyStatus.textContent = 'Copied!';
+        setTimeout(() => { copyStatus.textContent = ''; }, 2000);
+      } catch {
+        copyStatus.textContent = 'Select and copy the code above.';
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
