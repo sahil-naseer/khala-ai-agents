@@ -58,7 +58,8 @@ test('matchExactFaq matches every suggestedQuestion in tamyiz config', async () 
 test('getCandidateModels and buildGenerationConfig avoid slow thinking and flaky primary model', async () => {
   assert.equal(getCandidateModels()[0], 'gemini-3.5-flash-lite');
   assert.equal(getCandidateModels('gemini-3.1-flash-lite')[0], 'gemini-3.5-flash-lite');
-  assert.equal(getCandidateModels('gemini-3.5-flash')[0], 'gemini-3.5-flash');
+  assert.equal(getCandidateModels('gemini-3.5-flash')[0], 'gemini-3.5-flash-lite');
+  assert.equal(getCandidateModels('gemini-3-flash-preview')[0], 'gemini-3-flash-preview');
 
   assert.equal(buildGenerationConfig('gemini-3.5-flash-lite').thinkingConfig, undefined);
   assert.deepEqual(buildGenerationConfig('gemini-3.5-flash').thinkingConfig, { thinkingBudget: 0 });

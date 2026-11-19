@@ -1,15 +1,13 @@
 export const CANDIDATE_MODELS = [
   'gemini-3.5-flash-lite',
-  'gemini-3.5-flash',
   'gemini-3-flash-preview',
-  'gemini-3.1-flash-lite'
+  'gemini-flash-lite-latest'
 ];
 
 export function getCandidateModels(configuredModel) {
   const clean = typeof configuredModel === 'string' ? configuredModel.trim() : '';
-  const primary = !clean || clean === 'gemini-3.1-flash-lite'
-    ? 'gemini-3.5-flash-lite'
-    : clean;
+  const ignored = !clean || clean === 'gemini-3.1-flash-lite' || clean === 'gemini-3.5-flash';
+  const primary = ignored ? 'gemini-3.5-flash-lite' : clean;
   return [...new Set([primary, ...CANDIDATE_MODELS])];
 }
 
@@ -341,12 +339,11 @@ export function buildSystemPrompt(client, catalog = []) {
           const priceStr = typeof item.price === 'number' ? `₹${item.price}` : 'Price TBA';
           const pagesStr = item.pages ? `, ${item.pages} pages` : '';
           const taglineStr = item.tagline ? ` — ${item.tagline}` : '';
-          const descStr = item.description ? ` Overview: ${item.description}` : '';
           const tocStr = Array.isArray(item.chapters) && item.chapters.length > 0
             ? ` Chapters (${item.chapters.length}): ${item.chapters.join('; ')}.`
             : '';
           const urlStr = item.url ? ` URL: ${item.url}` : '';
-          return `${i + 1}. "${item.name}" (${priceStr}, ${item.status}${pagesStr})${taglineStr}${descStr}${tocStr}${urlStr}`;
+          return `${i + 1}. "${item.name}" (${priceStr}, ${item.status}${pagesStr})${taglineStr}${tocStr}${urlStr}`;
         })
       ].join('\n')
     : '';
