@@ -342,8 +342,7 @@ export function buildSystemPrompt(client, catalog = []) {
           const tocStr = Array.isArray(item.chapters) && item.chapters.length > 0
             ? ` Chapters (${item.chapters.length}): ${item.chapters.join('; ')}.`
             : '';
-          const urlStr = item.url ? ` URL: ${item.url}` : '';
-          return `${i + 1}. "${item.name}" (${priceStr}, ${item.status}${pagesStr})${taglineStr}${tocStr}${urlStr}`;
+          return `${i + 1}. "${item.name}" (${priceStr}, ${item.status}${pagesStr})${taglineStr}${tocStr}`;
         })
       ].join('\n')
     : '';
@@ -369,11 +368,11 @@ export function buildSystemPrompt(client, catalog = []) {
     'Strict Rules:',
     `- Never introduce yourself or repeat your name (NEVER start replies with "Hi, I'm ${client.agentName || 'Vee'}", "Hello, I am ${client.agentName || 'Vee'}", or similar greetings). The user already knows who you are from the chat header. Answer their question directly without repetitive greetings.`,
     '- Only state facts, book titles, prices, page counts, chapter names, policies, and contact details present in the Business Overview, Live Product Catalog, or FAQs above.',
-    '- Give concrete, specific answers: when asked about books, topics, chapters, pages, pricing, refunds, or links, name the exact book titles, prices in ₹, page counts, relevant chapters from the catalog, and include the exact plain URL. Never give vague or generic summaries when specific details exist above.',
+    '- Give concrete, specific answers: when asked about books, topics, chapters, pages, pricing, or refunds, name the exact book titles, prices in ₹, page counts, and relevant chapters from the catalog. Never give vague or generic summaries when specific details exist above.',
     '- Never invent pricing, discounts, guarantees, or policies.',
     `- If you are unsure or the user needs human help, ${escalation.note || 'apologize politely and share our support contact.'}`,
     contactParts.length > 0 ? `Support Contact: ${contactParts.join(' | ')}` : '',
-    '- Write plain URLs (e.g. https://tamyiz.pages.dev/editions) without Markdown [text](url) syntax.',
+    '- Never paste website URLs or page links in your replies because the customer is already on the website. Refer to book titles and site sections by name instead (e.g., "the E-books page", "Checkout", "Download Recovery").',
     '- Keep responses concise and well-structured (2–5 sentences, or clean bullet points when listing books, chapters, or steps).'
   ]
     .filter(Boolean)
@@ -509,6 +508,11 @@ export function stripSelfIntro(text, agentName = 'Vee') {
     `^(?:(?:Assalamu Alaikum[!,.]*|Hi|Hello|Hey|Greetings)[!,.]*\\s+)?(?:I'm|I am)\\s+${escapedName}(?:\\s*[,-]?\\s*(?:your|the|an)\\s+[^.!?\\n]+[!.?]+|\\s+from\\s+[^.!?\\n]+[!.?]+|[!,.]+|\\s+and\\s+[^.!?\\n]+[!.?]+)\\s*`,
     'i'
   );
-  const stripped = text.replace(introPattern, '').trim();
-  return stripped.length > 0 ? stripped : text.trim();
+  const cleaned = text
+    .replace(introPattern, '')
+    .replace(/\[([^\]]+)\]\(https?:\/\/tamyiz\.pages\.dev[^)]*\)/gi, '$1')
+    .replace(/\s*\((?:URL:\s*)?https?:\/\/tamyiz\.pages\.dev[^\s)]*\)/gi, '')
+    .replace(/\s*(?:URL:\s*)?https?:\/\/tamyiz\.pages\.dev[^\s),.;!]*/gi, '')
+    .trim();
+  return cleaned.length > 0 ? cleaned : text.trim();
 }

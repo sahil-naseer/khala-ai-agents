@@ -21,20 +21,20 @@
     "note": "If you cannot answer with certainty, or if a buyer has hit the 10-download limit or needs order help, direct them to email tamyiz.co@gmail.com or message WhatsApp +91 95417 22379 with their Razorpay payment ID."
   },
   "knowledgeBase": {
-    "overview": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform and online shop for DRM-free PDF e-books—including practical non-fiction/tech guides and literary fiction novellas—co-founded by Sahil Naseer (AI/ML & Build) and Basit Majeed (Security & Research), based in Sopore, Jammu & Kashmir 193201, India. Key pages: all e-books https://tamyiz.pages.dev/editions, films & trailers https://tamyiz.pages.dev/films, how we write https://tamyiz.pages.dev/philosophy, about us https://tamyiz.pages.dev/atelier, lost or re-download links https://tamyiz.pages.dev/downloads, checkout https://tamyiz.pages.dev/checkout, refunds & licence https://tamyiz.pages.dev/legal/license, privacy https://tamyiz.pages.dev/legal/privacy, terms https://tamyiz.pages.dev/legal/terms, delivery policy https://tamyiz.pages.dev/legal/delivery-protocol, contact https://tamyiz.pages.dev/legal/contact.",
+    "overview": "TAMYIZ™ is a digital publishing platform and online shop for DRM-free PDF e-books—including practical non-fiction/tech guides and literary fiction novellas—co-founded by Sahil Naseer (AI/ML & Build) and Basit Majeed (Security & Research), based in Sopore, Jammu & Kashmir 193201, India. Key sections on the site: the E-books page (all e-books), Films (trailers & previews), How we write, About us, Download Recovery (lost or re-download links), Checkout, and policy pages in the footer (Refund & Cancellation Policy, Privacy & Data Security, Terms of Service, Shipping & Delivery Policy, and Contact Us).",
     "workingHours": "24/7 AI support available anytime. Human support via email & WhatsApp responds as soon as possible.",
     "faqs": [
       {
         "question": "How many books do you have?",
-        "answer": "TAMYIZ™ currently has 9 PDF e-books on https://tamyiz.pages.dev/editions:\n- **Four Minutes Fast** — ₹550 (40 pages)\n- **The Girl Who Sold Dreams** — ₹499 (56 pages)\n- **The Last Letter from the Sea** — ₹449 (60 pages)\n- **The Built Mind** — ₹400 (79 pages)\n- **The First 12 Weeks** — ₹349 (86 pages)\n- **Start Selling Digital Products From Zero** — ₹699 (91 pages)\n- **The AI Playbook** — ₹299 (45 pages)\n- **Stay Safe Online** — ₹525 (55 pages)\n- **Research, Write & Cite with AI** — ₹629 (76 pages)"
+        "answer": "TAMYIZ™ currently has 9 PDF e-books on the E-books page:\n- **Four Minutes Fast** — ₹550 (40 pages)\n- **The Girl Who Sold Dreams** — ₹499 (56 pages)\n- **The Last Letter from the Sea** — ₹449 (60 pages)\n- **The Built Mind** — ₹400 (79 pages)\n- **The First 12 Weeks** — ₹349 (86 pages)\n- **Start Selling Digital Products From Zero** — ₹699 (91 pages)\n- **The AI Playbook** — ₹299 (45 pages)\n- **Stay Safe Online** — ₹525 (55 pages)\n- **Research, Write & Cite with AI** — ₹629 (76 pages)"
       },
       {
         "question": "What is TAMYIZ™?",
-        "answer": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform founded by Sahil Naseer and Basit Majeed in Sopore, Kashmir, offering DRM-free PDF e-books across practical AI/security/business guides and literary fiction. Learn more at https://tamyiz.pages.dev/atelier and https://tamyiz.pages.dev/philosophy."
+        "answer": "TAMYIZ™ is a digital publishing platform founded by Sahil Naseer and Basit Majeed in Sopore, Kashmir, offering DRM-free PDF e-books across practical AI/security/business guides and literary fiction. You can read more in the About us and How we write pages in the menu."
       },
       {
         "question": "Are there any bundle discounts?",
-        "answer": "Yes! TAMYIZ™ applies automatic bundle discounts at checkout (https://tamyiz.pages.dev/checkout): **20% off** when buying 2 books, and **25% off** when buying 3 or more books (applied automatically before any promo coupon)."
+        "answer": "Yes! TAMYIZ™ applies automatic bundle discounts at Checkout: **20% off** when buying 2 books, and **25% off** when buying 3 or more books (applied automatically before any promo coupon)."
       },
       {
         "question": "How do I download my e-book after paying?",
@@ -42,23 +42,23 @@
       },
       {
         "question": "How do I recover a lost download link?",
-        "answer": "If you lost your file, go to https://tamyiz.pages.dev/downloads and enter your order email or 10-digit phone number to have your download links re-sent to your order email. If you reached the 10-download limit, message us on WhatsApp at +91 95417 22379 or email tamyiz.co@gmail.com with your Razorpay payment ID."
+        "answer": "If you lost your file, open the Download Recovery page from the footer and enter your order email or 10-digit phone number to have your download links re-sent to your order email. If you reached the 10-download limit, message us on WhatsApp at +91 95417 22379 or email tamyiz.co@gmail.com with your Razorpay payment ID."
       },
       {
         "question": "Can I read a free sample first?",
-        "answer": "Yes! Open any book from https://tamyiz.pages.dev/editions and click \"Read Free Sample (Chapter 1)\" (or expand the on-page preview) to read Chapter 1 and browse the full chapter list before buying."
+        "answer": "Yes! Open any book from the E-books page and click \"Read Free Sample (Chapter 1)\" (or expand the on-page preview) to read Chapter 1 and browse the full chapter list before buying."
       },
       {
         "question": "What is your refund policy?",
-        "answer": "Because digital PDFs are delivered immediately, refunds are offered within 7 days for a double charge or a file we could not deliver or fix (processed back to your account in 5–7 working days). Full policy: https://tamyiz.pages.dev/legal/license."
+        "answer": "Because digital PDFs are delivered immediately, refunds are offered within 7 days for a double charge or a file we could not deliver or fix (processed back to your account in 5–7 working days). You can read the full Refund & Cancellation Policy in the footer."
       },
       {
         "question": "How do pre-orders and gift orders work?",
-        "answer": "Editions marked 'Coming Soon' can be pre-ordered on WhatsApp (+91 95417 22379). Promo coupons are also supported at https://tamyiz.pages.dev/checkout."
+        "answer": "Editions marked 'Coming Soon' can be pre-ordered on WhatsApp (+91 95417 22379). Promo coupons are also supported at Checkout."
       },
       {
         "question": "How do I contact TAMYIZ™ support?",
-        "answer": "You can email tamyiz.co@gmail.com, message WhatsApp at +91 95417 22379, or visit https://tamyiz.pages.dev/legal/contact."
+        "answer": "You can email tamyiz.co@gmail.com, message WhatsApp at +91 95417 22379, or open Contact Us in the footer."
       }
     ]
   }

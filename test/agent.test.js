@@ -70,6 +70,8 @@ test('getCandidateModels and buildGenerationConfig avoid slow thinking and flaky
   const prompt = buildSystemPrompt(tamyiz, catalog);
   assert.match(prompt, /45 pages/);
   assert.match(prompt, /Bonus: the prompt library/);
+  assert.doesNotMatch(prompt, /tamyiz\.pages\.dev/);
+  assert.doesNotMatch(matchExactFaq(tamyiz, 'what books do you have?') || '', /tamyiz\.pages\.dev/);
 });
 
 test('matchFaqFallback matches relevant FAQ in demo mode', async () => {
@@ -94,6 +96,14 @@ test('stripSelfIntro removes repetitive self-introductions', () => {
   assert.equal(
     stripSelfIntro("DRM-free PDF e-books are available on TAMYIZ™.", 'Vee'),
     'DRM-free PDF e-books are available on TAMYIZ™.'
+  );
+  assert.equal(
+    stripSelfIntro("The AI Playbook is ₹299 (URL: https://tamyiz.pages.dev/edition/the-ai-playbook).", 'Vee'),
+    'The AI Playbook is ₹299.'
+  );
+  assert.equal(
+    stripSelfIntro("Visit [E-books](https://tamyiz.pages.dev/editions) for more.", 'Vee'),
+    'Visit E-books for more.'
   );
 });
 
