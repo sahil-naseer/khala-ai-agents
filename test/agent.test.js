@@ -5,11 +5,13 @@ import {
   loadClientConfig,
   listClients,
   getPublicClientConfig,
+  fetchLiveCatalog,
   buildSystemPrompt,
   matchExactFaq,
   matchFaqFallback,
   stripSelfIntro
 } from '../src/agent.js';
+import { getCandidateModels, buildGenerationConfig } from '../src/agent-core.js';
 import { createApp } from '../server.js';
 
 test('loadClientConfig loads tamyiz and rejects invalid/traversal IDs', async () => {
@@ -47,7 +49,26 @@ test('matchExactFaq matches every suggestedQuestion in tamyiz config', async () 
     const answer = matchExactFaq(tamyiz, q);
     assert.ok(answer && answer.length > 10, `Expected exact FAQ match for "${q}"`);
   }
+  assert.ok(matchExactFaq(tamyiz, 'what books do you have?'));
+  assert.ok(matchExactFaq(tamyiz, 'bundle discount'));
+  assert.equal(matchExactFaq(tamyiz, 'what books do you have about AI?'), null);
   assert.equal(matchExactFaq(tamyiz, 'Something completely unrelated'), null);
+});
+
+test('getCandidateModels and buildGenerationConfig avoid slow thinking and flaky primary model', async () => {
+  assert.equal(getCandidateModels()[0], 'gemini-3.5-flash-lite');
+  assert.equal(getCandidateModels('gemini-3.1-flash-lite')[0], 'gemini-3.5-flash-lite');
+  assert.equal(getCandidateModels('gemini-3.5-flash')[0], 'gemini-3.5-flash');
+
+  assert.equal(buildGenerationConfig('gemini-3.5-flash-lite').thinkingConfig, undefined);
+  assert.deepEqual(buildGenerationConfig('gemini-3.5-flash').thinkingConfig, { thinkingBudget: 0 });
+  assert.deepEqual(buildGenerationConfig('gemini-3-flash-preview').thinkingConfig, { thinkingBudget: 0 });
+
+  const tamyiz = await loadClientConfig('tamyiz');
+  const catalog = await fetchLiveCatalog(tamyiz);
+  const prompt = buildSystemPrompt(tamyiz, catalog);
+  assert.match(prompt, /45 pages/);
+  assert.match(prompt, /Bonus: the prompt library/);
 });
 
 test('matchFaqFallback matches relevant FAQ in demo mode', async () => {

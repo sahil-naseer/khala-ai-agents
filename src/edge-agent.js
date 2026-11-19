@@ -1,6 +1,7 @@
 import tamyizClient from '../clients/tamyiz.json' with { type: 'json' };
 import {
-  CANDIDATE_MODELS,
+  getCandidateModels,
+  buildGenerationConfig,
   getPublicClientConfig,
   fetchLiveCatalog,
   buildSystemPrompt,
@@ -67,8 +68,7 @@ export async function generateEdgeReply({ client, message, history = [], env = {
     return { reply: exactMatch, mode: 'instant' };
   }
 
-  const primaryModel = env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
-  const candidateModels = [...new Set([primaryModel, ...CANDIDATE_MODELS])];
+  const candidateModels = getCandidateModels(env.GEMINI_MODEL);
   const catalog = await fetchLiveCatalog(client);
   const systemInstruction = buildSystemPrompt(client, catalog);
   const contents = buildGeminiContents(message, history);
@@ -80,14 +80,11 @@ export async function generateEdgeReply({ client, message, history = [], env = {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(6_000),
+        signal: AbortSignal.timeout(5_000),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: systemInstruction }] },
           contents,
-          generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 600
-          }
+          generationConfig: buildGenerationConfig(model)
         })
       });
 

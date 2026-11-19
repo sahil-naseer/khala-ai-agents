@@ -2,7 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { GoogleGenAI } from '@google/genai';
 import {
-  CANDIDATE_MODELS,
+  getCandidateModels,
+  buildGenerationConfig,
   getPublicClientConfig,
   fetchLiveCatalog,
   buildSystemPrompt,
@@ -97,8 +98,7 @@ export async function generateAgentReply({ client, message, history = [] }) {
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
-  const candidateModels = [...new Set([primaryModel, ...CANDIDATE_MODELS])];
+  const candidateModels = getCandidateModels(process.env.GEMINI_MODEL);
   const catalog = await fetchLiveCatalog(client);
   const systemInstruction = buildSystemPrompt(client, catalog);
   const contents = buildGeminiContents(message, history);
@@ -111,9 +111,8 @@ export async function generateAgentReply({ client, message, history = [] }) {
         contents,
         config: {
           systemInstruction,
-          temperature: 0.4,
-          maxOutputTokens: 600,
-          abortSignal: AbortSignal.timeout(6_000)
+          ...buildGenerationConfig(model),
+          abortSignal: AbortSignal.timeout(5_000)
         }
       });
 

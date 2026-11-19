@@ -21,24 +21,24 @@
     "note": "If you cannot answer with certainty, or if a buyer has hit the 10-download limit or needs order help, direct them to email tamyiz.co@gmail.com or message WhatsApp +91 95417 22379 with their Razorpay payment ID."
   },
   "knowledgeBase": {
-    "overview": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform and online shop for DRM-free PDF e-books—including both practical non-fiction/tech guides and literary fiction novellas—co-founded by Sahil Naseer (AI/ML & Build) and Basit Majeed (Security & Research), based in Sopore, Kashmir, India.",
+    "overview": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform and online shop for DRM-free PDF e-books—including practical non-fiction/tech guides and literary fiction novellas—co-founded by Sahil Naseer (AI/ML & Build) and Basit Majeed (Security & Research), based in Sopore, Jammu & Kashmir 193201, India. Key pages: all e-books https://tamyiz.pages.dev/editions, films & trailers https://tamyiz.pages.dev/films, how we write https://tamyiz.pages.dev/philosophy, about us https://tamyiz.pages.dev/atelier, lost or re-download links https://tamyiz.pages.dev/downloads, checkout https://tamyiz.pages.dev/checkout, refunds & licence https://tamyiz.pages.dev/legal/license, privacy https://tamyiz.pages.dev/legal/privacy, terms https://tamyiz.pages.dev/legal/terms, delivery policy https://tamyiz.pages.dev/legal/delivery-protocol, contact https://tamyiz.pages.dev/legal/contact.",
     "workingHours": "24/7 AI support available anytime. Human support via email & WhatsApp responds as soon as possible.",
     "faqs": [
       {
         "question": "How many books do you have?",
-        "answer": "TAMYIZ™ currently has 9 PDF e-books available on https://tamyiz.pages.dev:\n- **Four Minutes Fast** — ₹550\n- **The Girl Who Sold Dreams** — ₹499\n- **The Last Letter from the Sea** — ₹449\n- **The Built Mind** — ₹400\n- **The First 12 Weeks** — ₹349\n- **Start Selling Digital Products From Zero** — ₹699\n- **The AI Playbook** — ₹299\n- **Stay Safe Online** — ₹525\n- **Research, Write & Cite with AI** — ₹629"
+        "answer": "TAMYIZ™ currently has 9 PDF e-books on https://tamyiz.pages.dev/editions:\n- **Four Minutes Fast** — ₹550 (40 pages)\n- **The Girl Who Sold Dreams** — ₹499 (56 pages)\n- **The Last Letter from the Sea** — ₹449 (60 pages)\n- **The Built Mind** — ₹400 (79 pages)\n- **The First 12 Weeks** — ₹349 (86 pages)\n- **Start Selling Digital Products From Zero** — ₹699 (91 pages)\n- **The AI Playbook** — ₹299 (45 pages)\n- **Stay Safe Online** — ₹525 (55 pages)\n- **Research, Write & Cite with AI** — ₹629 (76 pages)"
       },
       {
         "question": "What is TAMYIZ™?",
-        "answer": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform founded by Sahil Naseer and Basit Majeed, offering DRM-free PDF e-books on practical topics, security, AI, and literary fiction."
+        "answer": "TAMYIZ™ (https://tamyiz.pages.dev) is a digital publishing platform founded by Sahil Naseer and Basit Majeed in Sopore, Kashmir, offering DRM-free PDF e-books across practical AI/security/business guides and literary fiction. Learn more at https://tamyiz.pages.dev/atelier and https://tamyiz.pages.dev/philosophy."
       },
       {
         "question": "Are there any bundle discounts?",
-        "answer": "Yes! TAMYIZ™ gives automatic bundle discounts at checkout: **20% off** when buying 2 books, and **25% off** when buying 3 or more books (applied automatically before any promo coupon)."
+        "answer": "Yes! TAMYIZ™ applies automatic bundle discounts at checkout (https://tamyiz.pages.dev/checkout): **20% off** when buying 2 books, and **25% off** when buying 3 or more books (applied automatically before any promo coupon)."
       },
       {
         "question": "How do I download my e-book after paying?",
-        "answer": "TAMYIZ™ e-books are DRM-free PDFs sold securely via Razorpay. Right after payment, your private signed download link appears immediately on screen AND is emailed to you via receipt (valid for 1 year, up to 10 downloads per link)."
+        "answer": "TAMYIZ™ e-books are DRM-free PDFs sold securely via Razorpay (UPI, cards, net banking, wallets). Right after payment, your private signed download link appears immediately on screen AND is emailed to you via receipt (valid for 1 year, up to 10 downloads per link). Reads on phones, tablets, laptops, Kindle (Send to Kindle), and Apple Books."
       },
       {
         "question": "How do I recover a lost download link?",
@@ -46,15 +46,19 @@
       },
       {
         "question": "Can I read a free sample first?",
-        "answer": "Yes! TAMYIZ™ offers a free Chapter 1 sample reader on https://tamyiz.pages.dev so you can preview the writing before purchasing."
+        "answer": "Yes! Open any book from https://tamyiz.pages.dev/editions and click \"Read Free Sample (Chapter 1)\" (or expand the on-page preview) to read Chapter 1 and browse the full chapter list before buying."
+      },
+      {
+        "question": "What is your refund policy?",
+        "answer": "Because digital PDFs are delivered immediately, refunds are offered within 7 days for a double charge or a file we could not deliver or fix (processed back to your account in 5–7 working days). Full policy: https://tamyiz.pages.dev/legal/license."
       },
       {
         "question": "How do pre-orders and gift orders work?",
-        "answer": "Editions marked 'Coming Soon' can be pre-ordered on WhatsApp (+91 95417 22379). Gift orders and promo coupons are also supported at checkout."
+        "answer": "Editions marked 'Coming Soon' can be pre-ordered on WhatsApp (+91 95417 22379). Promo coupons are also supported at https://tamyiz.pages.dev/checkout."
       },
       {
         "question": "How do I contact TAMYIZ™ support?",
-        "answer": "You can email tamyiz.co@gmail.com or message TAMYIZ™ support on WhatsApp at +91 95417 22379."
+        "answer": "You can email tamyiz.co@gmail.com, message WhatsApp at +91 95417 22379, or visit https://tamyiz.pages.dev/legal/contact."
       }
     ]
   }
